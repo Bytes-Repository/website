@@ -1,1 +1,253 @@
+/* Global Styles */
+body {
+    background-color: #000;
+    color: #0f0; /* Lime green */
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    font-size: 16px;
+    overflow-x: hidden;
+    position: relative;
+}
 
+#particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+a {
+    color: #0ff; /* Cyan */
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+a:hover {
+    color: #fff;
+    text-decoration: underline;
+    transform: scale(1.05);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Header */
+header {
+    text-align: center;
+    padding: 60px 0;
+    border-bottom: 2px solid #0f0;
+    background: linear-gradient(to bottom, #111, #000);
+    box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
+}
+
+header h1 {
+    font-size: 4em;
+    margin: 0;
+    color: #fff;
+    text-shadow: 0 0 15px #0f0, 0 0 30px #0f0;
+    animation: glow 1.5s infinite alternate;
+}
+
+header p {
+    font-size: 1.4em;
+    margin: 15px 0 0;
+    text-shadow: 0 0 5px #0f0;
+}
+
+/* Navigation */
+nav {
+    background-color: rgba(17, 17, 17, 0.9);
+    border-bottom: 1px solid #0f0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0, 255, 0, 0.1);
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul li {
+    margin: 0 20px;
+}
+
+nav ul li a {
+    display: block;
+    padding: 15px 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #222;
+    box-shadow: 0 0 10px #0f0;
+}
+
+/* Mobile Menu */
+.hamburger {
+    display: none;
+    font-size: 2.5em;
+    cursor: pointer;
+    padding: 15px;
+    color: #0f0;
+    position: absolute;
+    right: 20px;
+    top: 0;
+}
+
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        display: none;
+        position: absolute;
+        width: 100%;
+        background-color: #111;
+    }
+
+    nav ul.active {
+        display: flex;
+    }
+
+    nav ul li {
+        margin: 0;
+        text-align: center;
+    }
+
+    .hamburger {
+        display: block;
+    }
+}
+
+/* Main Content */
+main {
+    padding: 50px 0;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+h2 {
+    color: #fff;
+    border-bottom: 2px solid #0f0;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px #0f0;
+}
+
+ul.package-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul.package-list li {
+    background-color: #111;
+    margin: 15px 0;
+    padding: 20px;
+    border: 1px solid #0f0;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+ul.package-list li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 20px #0f0;
+}
+
+ul.package-list li a {
+    font-size: 1.2em;
+    flex: 1;
+}
+
+ul.package-list li span {
+    font-size: 0.9em;
+    color: #aaa;
+}
+
+/* Search Bar */
+.search-container {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.search-container input {
+    width: 70%;
+    padding: 15px;
+    background-color: #222;
+    border: 2px solid #0f0;
+    color: #0f0;
+    font-family: inherit;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+}
+
+.search-container input:focus {
+    outline: none;
+    box-shadow: 0 0 15px #0f0;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 30px 0;
+    border-top: 1px solid #0f0;
+    background-color: #111;
+    font-size: 0.9em;
+    color: #aaa;
+    position: relative;
+    z-index: 1;
+}
+
+footer a {
+    color: #0ff;
+    margin: 0 10px;
+}
+
+/* Animations */
+@keyframes glow {
+    0% { text-shadow: 0 0 5px #0f0, 0 0 10px #0f0; }
+    50% { text-shadow: 0 0 20px #0f0, 0 0 40px #0f0; }
+    100% { text-shadow: 0 0 5px #0f0, 0 0 10px #0f0; }
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    header h1 {
+        font-size: 2.5em;
+    }
+
+    header p {
+        font-size: 1.1em;
+    }
+
+    .search-container input {
+        width: 95%;
+    }
+
+    ul.package-list li {
+        flex-direction: column;
+        text-align: center;
+    }
+}
