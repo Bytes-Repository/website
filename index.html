@@ -1,1 +1,70 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bytes.io — the library index for H#</title>
+  <meta name="description" content="bytes.io is the open library index for the H# programming language." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23EC4899%22/></svg>" />
+  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/index.css" />
+</head>
+<body>
 
+  <nav class="site-nav">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">b</span>
+        bytes.io
+      </a>
+      <div class="nav-links">
+        <a href="#libraries">Libraries</a>
+        <a href="pages/about.html">About</a>
+      </div>
+      <a class="nav-cta" href="https://github.com/Bytes-Repository/repository" target="_blank" rel="noopener">index.json ↗</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="hero-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 3v18M6 3c4 0 6 1.6 6 4.5S10 12 6 12M6 12c4.6 0 7 1.8 7 5s-2.4 5-7 5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h1>The library index<br/>for <span>H#</span>.</h1>
+      <p class="lede">Every public H# library, indexed straight from GitHub. No registry to publish to — just a bytes.hk manifest and a listing in index.json.</p>
+
+      <div class="search-shell">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="lib-search" type="text" placeholder="Find a library — mold, obsidian, tui…" autocomplete="off" />
+      </div>
+
+      <div class="stat-row">
+        <span><b id="lib-count">— libraries</b></span>
+        <span>Source: <b>index.json</b></span>
+        <span>Hosted on <b>GitHub Pages</b></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="lib-section" id="libraries">
+    <div class="wrap">
+      <div class="lib-section-head">
+        <h2>All libraries</h2>
+        <span class="src">pulled live from <a href="https://github.com/Bytes-Repository/repository/blob/main/index.json" target="_blank" rel="noopener">Bytes-Repository/repository</a></span>
+      </div>
+      <div class="lib-grid" id="lib-grid"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>bytes.io is an index, not a host — every library lives in its own GitHub repo.</p>
+      <a href="pages/about.html">How it works →</a>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
