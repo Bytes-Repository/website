@@ -1,1 +1,94 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bytes.io — how it works</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23EC4899%22/></svg>" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <style>
+    .about-wrap{ max-width: 720px; margin: 0 auto; padding: 56px 28px 90px; }
+    .about-wrap h1{ font-family: var(--f-display); font-size: 34px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 8px; }
+    .about-wrap > p.lede{ color: var(--ink-soft); font-size: 15.5px; margin: 0 0 40px; }
+    .about-wrap section{ margin-bottom: 40px; }
+    .about-wrap h2{ font-family: var(--f-display); font-size: 19px; font-weight: 700; margin: 0 0 12px; }
+    .about-wrap p{ font-size: 14.5px; line-height: 1.7; color: var(--ink-soft); margin: 0 0 14px; }
+    .about-wrap pre{
+      background: #14141a; color: #dcdce6; padding: 18px 20px; border-radius: var(--radius-md);
+      font-family: var(--f-mono); font-size: 12.8px; line-height: 1.6; overflow-x: auto;
+    }
+    .about-wrap code{ font-family: var(--f-mono); font-size: 12.8px; background: var(--bg-soft); padding: 1px 6px; border-radius: 5px; }
+    .lang-swatches{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+    .lang-swatches .pill{ font-family: var(--f-mono); }
+  </style>
+</head>
+<body>
 
+  <nav class="site-nav">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">b</span>
+        bytes.io
+      </a>
+      <div class="nav-links">
+        <a href="../index.html#libraries">Libraries</a>
+        <a href="about.html">About</a>
+      </div>
+      <a class="nav-cta" href="../index.html">← Back to index</a>
+    </div>
+  </nav>
+
+  <main class="about-wrap">
+    <h1>How bytes.io works</h1>
+    <p class="lede">bytes.io doesn't host anything. It's a thin, static index over GitHub repos that follow two small conventions.</p>
+
+    <section>
+      <h2>1. The index</h2>
+      <p>Every known library is listed in <code>index.json</code>, kept in <a href="https://github.com/Bytes-Repository/repository" target="_blank" rel="noopener">Bytes-Repository/repository</a>. It's an array of single-key objects mapping a library name to its GitHub URL:</p>
+      <pre>[
+  { "mold": "https://github.com/Bytes-Repository/mold" },
+  { "obsidian": "https://github.com/Bytes-Repository/obsidian" },
+  { "tui": "https://github.com/Bytes-Repository/tui" },
+  { "silver": "https://github.com/Bytes-Repository/silver" },
+  { "nidus": "https://github.com/Bytes-Repository/nidus" }
+]</pre>
+      <p>This whole site fetches that file directly from GitHub at load time, so adding a library is a single pull request — no publish step, no build.</p>
+    </section>
+
+    <section>
+      <h2>2. The manifest — <code>bytes.hk</code></h2>
+      <p>Each repo carries a <code>bytes.hk</code> file at its root, playing the role <code>Cargo.toml</code> plays for Rust — with its own block syntax:</p>
+      <pre>@package {
+  name: "mold"
+  version: "0.4.2"
+  authors: ["janekk"]
+  license: "MIT"
+  description: "Molding utilities for H#"
+}
+
+@deps {
+  obsidian: "^1.2.0"
+  silver: ">=0.3"
+}
+
+@build {
+  entry: "src/main.h#"
+  target: "native"
+}</pre>
+      <p>bytes.io fetches and parses this file client-side to render the package, dependency, and build panels on each library's page.</p>
+    </section>
+
+    <section>
+      <h2>3. Language detection</h2>
+      <p>The language bar on every library page starts from GitHub's own <code>/languages</code> API, then adds three extensions GitHub's linguist doesn't recognize by walking the repo's file tree:</p>
+      <div class="lang-swatches">
+        <span class="pill"><span class="dot" style="background:#9c1120"></span>H# — .h#</span>
+        <span class="pill"><span class="dot" style="background:#c23b4e"></span>H# Interface — .h#i</span>
+        <span class="pill"><span class="dot" style="background:#d99a2b"></span>Bytes Manifest — .hk</span>
+      </div>
+      <p style="margin-top:14px;">When H# is a repo's dominant language, its page shows the glossy H# badge instead of a plain legend dot.</p>
+    </section>
+  </main>
+
+</body>
+</html>
