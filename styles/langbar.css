@@ -1,0 +1,101 @@
+.lang-widget{
+  position: fixed;
+  right: 22px; bottom: 22px;
+  width: 272px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-pop);
+  padding: 16px 16px 14px;
+  z-index: 50;
+  font-size: 12.5px;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.lang-widget.is-collapsed{ width: auto; padding: 10px 12px; cursor: pointer; }
+
+.lang-widget-head{
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.lang-widget-head h4{
+  margin: 0; font-family: var(--f-display); font-size: 13px; font-weight: 700;
+  color: var(--ink);
+}
+.lang-widget-toggle{
+  border: none; background: none; cursor: pointer;
+  color: var(--muted); width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+}
+.lang-widget-toggle:hover{ background: var(--bg-soft); color: var(--ink); }
+
+.lang-bar{
+  display: flex; width: 100%; height: 8px;
+  border-radius: 999px; overflow: hidden;
+  background: var(--line-soft);
+  margin-bottom: 12px;
+}
+.lang-bar span{
+  height: 100%;
+  transition: flex-basis .4s ease;
+}
+.lang-bar span.is-hsharp{
+  background-image: linear-gradient(180deg, var(--hsharp-glow) 0%, var(--hsharp-1) 35%, var(--hsharp-2) 100%);
+}
+
+.lang-legend{
+  display: flex; flex-wrap: wrap; gap: 6px 14px;
+  max-height: 132px; overflow-y: auto;
+}
+.lang-legend-item{
+  display: flex; align-items: center; gap: 6px;
+  color: var(--ink-soft); font-weight: 500;
+}
+.lang-legend-item b{ color: var(--ink); font-weight: 600; }
+.lang-legend-item .pct{ color: var(--muted); font-family: var(--f-mono); font-size: 11px; }
+
+.lang-legend-item.is-hsharp b{ color: var(--hsharp-1); }
+
+/* ---- the glossy H# badge, styled after the reference mark ---- */
+.hsharp-badge{
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px 8px 8px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: linear-gradient(160deg, #1a1a1f 0%, #0b0b0d 100%);
+}
+.hsharp-hex{
+  --size: 30px;
+  width: var(--size); height: var(--size); flex: none;
+  position: relative;
+  clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0% 50%);
+  background: linear-gradient(155deg, var(--hsharp-glow) 0%, var(--hsharp-1) 45%, var(--hsharp-2) 100%);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.5), 0 3px 8px -2px rgba(140,10,20,.7);
+}
+.hsharp-hex::after{
+  content: "";
+  position: absolute; top: 12%; left: 16%;
+  width: 26%; height: 26%;
+  background: radial-gradient(circle, rgba(255,255,255,.85), transparent 70%);
+  border-radius: 50%;
+  filter: blur(.5px);
+}
+.hsharp-hex-label{
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-family: var(--f-mono); font-weight: 700; font-size: 10.5px;
+  letter-spacing: -.03em;
+  text-shadow: 0 1px 1px rgba(0,0,0,.35);
+}
+.hsharp-badge-text{ line-height: 1.25; }
+.hsharp-badge-text .top{ color: #fff; font-size: 12px; font-weight: 700; font-family: var(--f-display); }
+.hsharp-badge-text .sub{ color: #a8a8b3; font-size: 10.5px; }
+
+/* dominant-language callout shown only when H# leads the repo */
+.lang-widget[data-dominant="hsharp"]{
+  border-color: rgba(156,17,32,.35);
+}
+
+@media (max-width: 640px){
+  .lang-widget{ left: 16px; right: 16px; width: auto; bottom: 16px; }
+}
