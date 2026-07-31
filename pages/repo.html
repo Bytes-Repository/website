@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bytes.io — repository</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23EC4899%22/></svg>" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../styles/repo.css" />
+  <link rel="stylesheet" href="../styles/langbar.css" />
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">b</span>
+        bytes.io
+      </a>
+      <div class="nav-links">
+        <a href="../index.html#libraries">Libraries</a>
+        <a href="about.html">About</a>
+      </div>
+      <a class="nav-cta" href="../index.html">← Back to index</a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <p class="repo-crumb"><a href="../index.html">Libraries</a> / <span id="repo-crumb-name"></span></p>
+  </div>
+
+  <div class="wrap">
+    <header class="repo-head">
+      <div class="repo-head-id">
+        <div class="repo-glyph" id="repo-glyph">—</div>
+        <div>
+          <h1 id="repo-title">Loading…</h1>
+          <p class="repo-desc" id="repo-desc">Fetching manifest…</p>
+        </div>
+      </div>
+      <div class="repo-head-actions">
+        <a class="gh-link" id="repo-gh-link" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.8 5.4.8 11.7c0 5 3.3 9.3 7.8 10.8.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11 11 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6 4.5-1.5 7.8-5.8 7.8-10.8C23.2 5.4 18.3.5 12 .5Z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+    </header>
+
+    <div class="repo-body">
+      <aside>
+        <div class="panel" id="panel-package"><h3>Package</h3></div>
+        <div class="panel" id="panel-deps"><h3>Dependencies</h3></div>
+        <div class="panel" id="panel-build"><h3>Build</h3></div>
+      </aside>
+
+      <section class="panel code-panel">
+        <div class="code-head">
+          <span id="hk-code-head">bytes.hk</span>
+          <span class="pill">manifest</span>
+        </div>
+        <pre><code id="hk-code"></code></pre>
+      </section>
+    </div>
+  </div>
+
+  <div class="lang-widget" id="lang-widget">
+    <div class="lang-widget-head">
+      <h4>Languages</h4>
+      <button class="lang-widget-toggle" id="lang-widget-toggle" title="Collapse">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div id="lang-widget-body">
+      <div class="lang-bar"><span style="flex-basis:100%;background:var(--line-soft)"></span></div>
+      <p style="color:var(--muted);margin:0;">Detecting…</p>
+    </div>
+  </div>
+
+  <script src="../js/langcolors.js"></script>
+  <script src="../js/hk-parser.js"></script>
+  <script src="../js/repo.js"></script>
+  <script>
+    document.getElementById("repo-crumb-name").textContent = new URLSearchParams(location.search).get("name") || "repository";
+  </script>
+</body>
+</html>
