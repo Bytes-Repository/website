@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://bytes-repository.github.io/index.html</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://bytes-repository.github.io/pages/about.html</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://bytes-repository.github.io/pages/recent.html</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://bytes-repository.github.io/pages/badge.html</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://bytes-repository.github.io/pages/lib/mold.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bytes-repository.github.io/pages/lib/tui.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bytes-repository.github.io/pages/lib/silver.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://bytes-repository.github.io/pages/lib/nidus.html</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+</urlset>
