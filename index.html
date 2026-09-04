@@ -6,8 +6,32 @@
   <title>bytes.io — the library index for H#</title>
   <meta name="description" content="bytes.io is the open library index for the H# programming language." />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23EC4899%22/></svg>" />
+    <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="bytes.io" />
+  <meta property="og:title" content="bytes.io — the library index for H#" />
+  <meta property="og:description" content="The open library index for the H# programming language. No registry to publish to — just a bytes.hk manifest and a listing in index.json." />
+  <meta property="og:url" content="https://bytes-repository.github.io/index.html" />
+  <meta property="og:image" content="https://bytes-repository.github.io/images/og/default.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="bytes.io — the library index for H#" />
+  <meta name="twitter:description" content="The open library index for the H# programming language. No registry to publish to — just a bytes.hk manifest and a listing in index.json." />
+  <meta name="twitter:image" content="https://bytes-repository.github.io/images/og/default.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#EC4899" />
+  <link rel="alternate" type="application/atom+xml" title="bytes.io — recently added libraries" href="feed.xml" />
   <link rel="stylesheet" href="styles/base.css" />
   <link rel="stylesheet" href="styles/index.css" />
+  <script>
+    // Inline + blocking so the theme is set before first paint (no flash of the wrong theme).
+    (function(){
+      try {
+        var stored = localStorage.getItem("bytesio:theme");
+        var theme = stored === "light" || stored === "dark" ? stored :
+          (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
 
@@ -17,13 +41,42 @@
         <span class="brand-mark">b</span>
         bytes.io
       </a>
-      <div class="nav-links">
+      <div class="nav-links" id="nav-links">
         <a href="#libraries">Libraries</a>
+        <a href="pages/recent.html">Recently added</a>
+        <a href="pages/badge.html">Badges</a>
         <a href="pages/about.html">About</a>
       </div>
-      <a class="nav-cta" href="https://github.com/Bytes-Repository/repository" target="_blank" rel="noopener">index.json ↗</a>
+      <button class="nav-burger" id="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="nav-right">
+        <button class="gh-token-btn" data-gh-settings aria-label="GitHub API token settings" title="GitHub API token (raises the 60 req/hour limit)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M14.7 9.3a3.5 3.5 0 1 1-4.9-4.9 3.5 3.5 0 0 1 4.9 4.9Zm0 0L20 14.6M20 14.6l-1.6 1.6M20 14.6l1.6 1.6M17.4 17.2l-1.7 1.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2.4M12 19v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19 12h2.4M4.9 19l1.7-1.7M17.4 6.6l1.7-1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </button>
+        <a class="nav-cta" href="https://github.com/Bytes-Repository/repository" target="_blank" rel="noopener">index.json ↗</a>
+      </div>
     </div>
   </nav>
+
+  <div class="modal-overlay" id="gh-modal" hidden role="dialog" aria-modal="true" aria-labelledby="gh-modal-title" tabindex="-1">
+    <div class="modal">
+      <h3 id="gh-modal-title">GitHub API token</h3>
+      <p>bytes.io calls GitHub's API to read languages, manifests, and commit history for each repo. Unauthenticated requests are capped at 60/hour; a personal access token raises that to 5,000/hour. The token is stored only in this browser's <code>localStorage</code> and is sent only to <code>api.github.com</code> / <code>raw.githubusercontent.com</code> — never to bytes.io or anywhere else. A token with no scopes (or a fine-grained, read-only, public-repos token) is enough.</p>
+      <input type="password" id="gh-token-input" placeholder="ghp_&hellip; or github_pat_&hellip;" autocomplete="off" />
+      <p class="token-status" id="gh-token-status"></p>
+      <div class="modal-actions">
+        <button id="gh-token-save">Save</button>
+        <button id="gh-token-clear">Clear</button>
+        <button id="gh-token-close">Close</button>
+      </div>
+      <p class="rate-note" id="gh-rate-note">Checking rate limit&hellip;</p>
+    </div>
+  </div>
 
   <header class="hero">
     <div class="wrap">
@@ -37,7 +90,7 @@
 
       <div class="search-shell">
         <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        <input id="lib-search" type="text" placeholder="Find a library — mold, obsidian, tui…" autocomplete="off" />
+        <input id="lib-search" type="text" placeholder="Find a library — by name, description, or tag…" autocomplete="off" />
       </div>
 
       <div class="stat-row">
@@ -45,6 +98,7 @@
         <span>Source: <b>index.json</b></span>
         <span>Hosted on <b>GitHub Pages</b></span>
       </div>
+      <p class="cache-note" id="cache-note"></p>
     </div>
   </header>
 
@@ -54,17 +108,70 @@
         <h2>All libraries</h2>
         <span class="src">pulled live from <a href="https://github.com/Bytes-Repository/repository/blob/main/index.json" target="_blank" rel="noopener">Bytes-Repository/repository</a></span>
       </div>
+
+      <div class="filter-bar">
+        <label class="filter-field">
+          <span>Language</span>
+          <select id="filter-lang">
+            <option value="all">All languages</option>
+          </select>
+        </label>
+        <label class="filter-field">
+          <span>Sort by</span>
+          <select id="filter-sort">
+            <option value="name">Name (A–Z)</option>
+            <option value="downloads">Most downloads</option>
+            <option value="stars">Most stars</option>
+            <option value="recent">Recently updated</option>
+          </select>
+        </label>
+      </div>
+      <div class="tag-bar" id="filter-tags" hidden></div>
+
       <div class="lib-grid" id="lib-grid"></div>
     </div>
   </main>
 
+  <div class="compare-bar" id="compare-bar" hidden>
+    <span id="compare-count">0 selected</span>
+    <div class="compare-bar-actions">
+      <button id="compare-open">Compare</button>
+      <button id="compare-clear">Clear</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="compare-modal" hidden role="dialog" aria-modal="true" aria-labelledby="compare-modal-title" tabindex="-1">
+    <div class="modal compare-modal">
+      <div class="compare-modal-head">
+        <h3 id="compare-modal-title">Comparing libraries</h3>
+        <button class="modal-x" id="compare-close" aria-label="Close">✕</button>
+      </div>
+      <div id="compare-table-wrap"></div>
+    </div>
+  </div>
+
   <footer class="site-footer">
     <div class="wrap">
       <p>bytes.io is an index, not a host — every library lives in its own GitHub repo.</p>
-      <a href="pages/about.html">How it works →</a>
+      <div class="footer-links">
+        <a href="feed.xml">RSS/Atom feed</a>
+        <a href="pages/recent.html">Recently added</a>
+        <a href="pages/about.html">How it works →</a>
+      </div>
     </div>
   </footer>
 
+  <script src="js/github.js"></script>
+  <script src="js/a11y.js"></script>
+  <script src="js/langcolors.js"></script>
+  <script src="js/hk-parser.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/index-data.js"></script>
+  <script src="js/enrich.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/pwa.js"></script>
+  <script src="js/github-settings.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
