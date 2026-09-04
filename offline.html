@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bytes.io — offline</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23EC4899%22/></svg>" />
+  <link rel="stylesheet" href="styles/base.css" />
+  <script>
+    (function(){
+      try {
+        var stored = localStorage.getItem("bytesio:theme");
+        var theme = stored === "light" || stored === "dark" ? stored :
+          (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    .state-wrap{ max-width: 460px; margin: 0 auto; padding: 110px 28px; text-align: center; }
+    .state-wrap .mark{
+      width: 64px; height: 64px; margin: 0 auto 24px; border-radius: 18px;
+      background: var(--b-gradient); display: flex; align-items: center; justify-content: center;
+      color: #fff; font-family: var(--f-display); font-weight: 800; font-size: 26px;
+    }
+    .state-wrap h1{ font-family: var(--f-display); font-size: 24px; font-weight: 800; margin: 0 0 10px; }
+    .state-wrap p{ color: var(--ink-soft); font-size: 14.5px; line-height: 1.6; margin: 0 0 26px; }
+  </style>
+</head>
+<body>
+  <div class="state-wrap">
+    <div class="mark">b</div>
+    <h1>You're offline</h1>
+    <p>bytes.io couldn't reach the network for this page. Pages and libraries you've already visited are cached and should still work — try the index below, or reconnect and try again.</p>
+    <button class="retry-btn" onclick="location.reload()">Try again</button>
+    &nbsp;
+    <a class="nav-cta" href="index.html">Go to index</a>
+  </div>
+</body>
+</html>
