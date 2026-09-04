@@ -1,4 +1,4 @@
-const CACHE_VERSION = "bytesio-v3";
+const CACHE_VERSION = "bytesio-v1";
 const APP_SHELL = [
   "./",
   "./index.html",
