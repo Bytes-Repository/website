@@ -46,7 +46,9 @@ const GITHUB_LANG_COLORS = {
 const BYTES_CUSTOM_LANG_COLORS = {
   "H#": "#9c1120",
   "H# Interface": "#c23b4e",
-  "Bytes Manifest": "#d99a2b"
+  "hk": "#ffffff",
+  "HackerScript": "#8a8a94",
+  "Hacker Lang": "#8250df"
 };
 
 const LANGUAGE_COLORS = Object.assign({}, GITHUB_LANG_COLORS, BYTES_CUSTOM_LANG_COLORS);
@@ -57,8 +59,17 @@ const FALLBACK_COLOR = "#8f8fa3";
 const EXTENSION_TO_LANGUAGE = {
   "h#": "H#",
   "h#i": "H# Interface",
-  "hk": "Bytes Manifest"
+  "hk": "hk",
+  "hcs": "HackerScript",
+  "hl": "Hacker Lang"
 };
+
+/** Languages whose swatch color is (near-)white and needs a visible outline wherever it's drawn. */
+const LIGHT_LANGUAGE_NAMES = new Set(["hk"]);
+
+function needsOutline(name) {
+  return LIGHT_LANGUAGE_NAMES.has(name);
+}
 
 function colorForLanguage(name) {
   return LANGUAGE_COLORS[name] || FALLBACK_COLOR;
