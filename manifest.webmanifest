@@ -1,0 +1,13 @@
+{
+  "name": "bytes.io — the library index for H#",
+  "short_name": "bytes.io",
+  "description": "The open library index for the H# programming language. No registry to publish to — just a bytes.hk manifest and a listing in index.json.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#EC4899",
+  "icons": [
+    { "src": "images/logo.png", "sizes": "400x400", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
