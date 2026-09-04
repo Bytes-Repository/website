@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bytes.io — 404</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23EC4899%22/></svg>" />
+  <link rel="stylesheet" href="styles/base.css" />
+  <script>
+    (function(){
+      try {
+        var stored = localStorage.getItem("bytesio:theme");
+        var theme = stored === "light" || stored === "dark" ? stored :
+          (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    .state-wrap{ max-width: 480px; margin: 0 auto; padding: 110px 28px; text-align: center; }
+    .state-wrap .code{
+      font-family: var(--f-display); font-weight: 800; font-size: 64px;
+      background: var(--b-gradient); -webkit-background-clip: text; background-clip: text;
+      color: transparent; margin: 0 0 6px; line-height: 1;
+    }
+    .state-wrap h1{ font-family: var(--f-display); font-size: 21px; font-weight: 700; margin: 0 0 10px; }
+    .state-wrap p{ color: var(--ink-soft); font-size: 14.5px; line-height: 1.6; margin: 0 0 26px; }
+    .state-wrap .actions{ display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="state-wrap">
+    <p class="code">404</p>
+    <h1>This page doesn't exist</h1>
+    <p>The library or page you're looking for isn't here — it may have moved, or the link is wrong. If you followed a link to a specific library, double-check the <code>name</code> and <code>url</code> query parameters.</p>
+    <div class="actions">
+      <a class="nav-cta" href="/index.html">Back to index</a>
+      <a class="retry-btn" href="/pages/about.html" style="text-decoration:none; display:inline-flex; align-items:center;">How it works</a>
+    </div>
+  </div>
+</body>
+</html>
