@@ -183,6 +183,11 @@ button{ font: inherit; }
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
 }
+/* `.modal-overlay{ display:flex }` and the browser's built-in `[hidden]{ display:none }`
+   have identical specificity, and author CSS wins cascade ties over the UA
+   stylesheet — so without this, the `hidden` attribute that JS toggles to
+   open/close a modal is silently ignored and every modal renders at once. */
+.modal-overlay[hidden]{ display: none; }
 .modal{
   width: 100%; max-width: 420px;
   background: var(--bg-card); border: 1px solid var(--line);
