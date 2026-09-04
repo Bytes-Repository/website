@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>bytes.io — recently added libraries</title>
+  <subtitle>New H# libraries added to the bytes.io index.</subtitle>
+  <link href="https://bytes-repository.github.io/feed.xml" rel="self" />
+  <link href="https://bytes-repository.github.io/index.html" />
+  <id>https://bytes-repository.github.io/</id>
+  <updated>2026-09-03T20:05:33.237Z</updated>
+  <entry>
+    <title>mold</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=mold&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Fmold" />
+    <id>https://github.com/Bytes-Repository/mold</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>mold — manifest at https://github.com/Bytes-Repository/mold/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>obsidian</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=obsidian&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Fobsidian" />
+    <id>https://github.com/Bytes-Repository/obsidian</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>obsidian — manifest at https://github.com/Bytes-Repository/obsidian/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>tui</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=tui&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Ftui" />
+    <id>https://github.com/Bytes-Repository/tui</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>tui — manifest at https://github.com/Bytes-Repository/tui/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>silver</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=silver&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Fsilver" />
+    <id>https://github.com/Bytes-Repository/silver</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>silver — manifest at https://github.com/Bytes-Repository/silver/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>nidus</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=nidus&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Fnidus" />
+    <id>https://github.com/Bytes-Repository/nidus</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>nidus — manifest at https://github.com/Bytes-Repository/nidus/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>hk-parser</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=hk-parser&amp;url=https%3A%2F%2Fgithub.com%2FHackerOS-Linux-System%2Fhk-parser" />
+    <id>https://github.com/HackerOS-Linux-System/hk-parser</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>hk-parser — manifest at https://github.com/HackerOS-Linux-System/hk-parser/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>H2D</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=H2D&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2FH2D" />
+    <id>https://github.com/Bytes-Repository/H2D</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>H2D — manifest at https://github.com/Bytes-Repository/H2D/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>volcan</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=volcan&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Fvolcan" />
+    <id>https://github.com/Bytes-Repository/volcan</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>volcan — manifest at https://github.com/Bytes-Repository/volcan/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>satsolv</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=satsolv&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Fsatsolv" />
+    <id>https://github.com/Bytes-Repository/satsolv</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>satsolv — manifest at https://github.com/Bytes-Repository/satsolv/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>fasttree</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=fasttree&amp;url=https%3A%2F%2Fgithub.com%2FZenit-Linux%2Flibfasttree" />
+    <id>https://github.com/Zenit-Linux/libfasttree</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>fasttree — manifest at https://github.com/Zenit-Linux/libfasttree/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>hacker</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=hacker&amp;url=https%3A%2F%2Fgithub.com%2FHackerOS-Linux-System%2Fhacker" />
+    <id>https://github.com/HackerOS-Linux-System/hacker</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>hacker — manifest at https://github.com/HackerOS-Linux-System/hacker/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>sqlite</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=sqlite&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Fsqlite" />
+    <id>https://github.com/Bytes-Repository/sqlite</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>sqlite — manifest at https://github.com/Bytes-Repository/sqlite/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>gtk</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=gtk&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Fgtk" />
+    <id>https://github.com/Bytes-Repository/gtk</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>gtk — manifest at https://github.com/Bytes-Repository/gtk/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>qt-hsharp</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=qt-hsharp&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Fqt-sharp" />
+    <id>https://github.com/Bytes-Repository/qt-sharp</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>qt-hsharp — manifest at https://github.com/Bytes-Repository/qt-sharp/blob/main/bytes.hk</summary>
+  </entry>
+  <entry>
+    <title>progress-bar</title>
+    <link href="https://bytes-repository.github.io/pages/repo.html?name=progress-bar&amp;url=https%3A%2F%2Fgithub.com%2FBytes-Repository%2Fprogress-bar" />
+    <id>https://github.com/Bytes-Repository/progress-bar</id>
+    <published>2026-09-03T20:05:33.237Z</published>
+    <updated>2026-09-03T20:05:33.237Z</updated>
+    <summary>progress-bar — manifest at https://github.com/Bytes-Repository/progress-bar/blob/main/bytes.hk</summary>
+  </entry>
+</feed>
