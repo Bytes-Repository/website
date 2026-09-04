@@ -5,7 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>bytes.io — how it works</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23EC4899%22/></svg>" />
+    <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="bytes.io" />
+  <meta property="og:title" content="How bytes.io works" />
+  <meta property="og:description" content="How the bytes.hk manifest, language detection, caching, and every other bytes.io feature works, in one page." />
+  <meta property="og:url" content="https://bytes-repository.github.io/pages/about.html" />
+  <meta property="og:image" content="https://bytes-repository.github.io/images/og/default.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How bytes.io works" />
+  <meta name="twitter:description" content="How the bytes.hk manifest, language detection, caching, and every other bytes.io feature works, in one page." />
+  <meta name="twitter:image" content="https://bytes-repository.github.io/images/og/default.png" />
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <meta name="theme-color" content="#EC4899" />
   <link rel="stylesheet" href="../styles/base.css" />
+  <script>
+    (function(){
+      try {
+        var stored = localStorage.getItem("bytesio:theme");
+        var theme = stored === "light" || stored === "dark" ? stored :
+          (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
   <style>
     .about-wrap{ max-width: 720px; margin: 0 auto; padding: 56px 28px 90px; }
     .about-wrap h1{ font-family: var(--f-display); font-size: 34px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 8px; }
@@ -30,13 +52,42 @@
         <span class="brand-mark">b</span>
         bytes.io
       </a>
-      <div class="nav-links">
+      <div class="nav-links" id="nav-links">
         <a href="../index.html#libraries">Libraries</a>
+        <a href="recent.html">Recently added</a>
+        <a href="badge.html">Badges</a>
         <a href="about.html">About</a>
       </div>
-      <a class="nav-cta" href="../index.html">← Back to index</a>
+      <button class="nav-burger" id="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="nav-right">
+        <button class="gh-token-btn" data-gh-settings aria-label="GitHub API token settings" title="GitHub API token (raises the 60 req/hour limit)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M14.7 9.3a3.5 3.5 0 1 1-4.9-4.9 3.5 3.5 0 0 1 4.9 4.9Zm0 0L20 14.6M20 14.6l-1.6 1.6M20 14.6l1.6 1.6M17.4 17.2l-1.7 1.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2.4M12 19v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19 12h2.4M4.9 19l1.7-1.7M17.4 6.6l1.7-1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </button>
+        <a class="nav-cta" href="../index.html">← Back to index</a>
+      </div>
     </div>
   </nav>
+
+  <div class="modal-overlay" id="gh-modal" hidden role="dialog" aria-modal="true" aria-labelledby="gh-modal-title" tabindex="-1">
+    <div class="modal">
+      <h3 id="gh-modal-title">GitHub API token</h3>
+      <p>bytes.io calls GitHub's API to read languages, manifests, and commit history for each repo. Unauthenticated requests are capped at 60/hour; a personal access token raises that to 5,000/hour. The token is stored only in this browser's <code>localStorage</code> and is sent only to <code>api.github.com</code> / <code>raw.githubusercontent.com</code> — never to bytes.io or anywhere else. A token with no scopes (or a fine-grained, read-only, public-repos token) is enough.</p>
+      <input type="password" id="gh-token-input" placeholder="ghp_&hellip; or github_pat_&hellip;" autocomplete="off" />
+      <p class="token-status" id="gh-token-status"></p>
+      <div class="modal-actions">
+        <button id="gh-token-save">Save</button>
+        <button id="gh-token-clear">Clear</button>
+        <button id="gh-token-close">Close</button>
+      </div>
+      <p class="rate-note" id="gh-rate-note">Checking rate limit&hellip;</p>
+    </div>
+  </div>
 
   <main class="about-wrap">
     <h1>How bytes.io works</h1>
@@ -74,21 +125,100 @@
 @build {
   entry: "src/main.h#"
   target: "native"
+}
+
+@stats {
+  downloads: 15234
+  stars: 342
+  tags: ["cli", "parser", "compression"]
+}
+
+@downloads {
+  "0.4.2": 8210
+  "0.4.1": 4120
+  "0.4.0": 2104
+  "0.3.0": 800
 }</pre>
-      <p>bytes.io fetches and parses this file client-side to render the package, dependency, and build panels on each library's page.</p>
+      <p>bytes.io fetches and parses this file client-side to render the package, dependency, build, and stats panels on each library's page. The <code>@stats</code> block is optional — <code>downloads</code> and <code>stars</code> render as figures, and <code>tags</code> render as pills. The optional <code>@downloads</code> block breaks that total down per version, crates.io-style: each key is a version string, each value its download count, rendered as a bar chart sorted by version.</p>
     </section>
 
     <section>
       <h2>3. Language detection</h2>
-      <p>The language bar on every library page starts from GitHub's own <code>/languages</code> API, then adds three extensions GitHub's linguist doesn't recognize by walking the repo's file tree:</p>
+      <p>The language bar on every library page starts from GitHub's own <code>/languages</code> API, then adds five extensions GitHub's linguist doesn't recognize by walking the repo's file tree:</p>
       <div class="lang-swatches">
         <span class="pill"><span class="dot" style="background:#9c1120"></span>H# — .h#</span>
         <span class="pill"><span class="dot" style="background:#c23b4e"></span>H# Interface — .h#i</span>
-        <span class="pill"><span class="dot" style="background:#d99a2b"></span>Bytes Manifest — .hk</span>
+        <span class="pill"><span class="dot" style="background:#ffffff;box-shadow:inset 0 0 0 1px var(--line);"></span>hk — .hk</span>
+        <span class="pill"><span class="dot" style="background:#8a8a94"></span>HackerScript — .hcs</span>
+        <span class="pill"><span class="dot" style="background:#8250df"></span>Hacker Lang — .hl</span>
       </div>
       <p style="margin-top:14px;">When H# is a repo's dominant language, its page shows the glossy H# badge instead of a plain legend dot.</p>
     </section>
+
+    <section>
+      <h2>4. Search, filters & sorting</h2>
+      <p>The search box on the homepage matches against a library's name, its <code>@package.description</code>, and its <code>@stats.tags</code> — not just the name. The language dropdown and tag chips underneath narrow the grid further, and the sort control reorders it by name, downloads, stars, or how recently <code>bytes.hk</code> was last touched. All of this runs on data gathered in the background right after <code>index.json</code> loads: each library's language, description, tags, and last-commit date get fetched a few at a time and cached, so cards fill in progressively instead of blocking the page.</p>
+    </section>
+
+    <section>
+      <h2>5. Caching &amp; offline support</h2>
+      <p><code>index.json</code> and every per-repo lookup (language bytes, manifest contents, commit dates, GitHub profiles) are cached in <code>localStorage</code> with a time-to-live — ten minutes for the index, six hours for repo metadata. Repeat visits render instantly from cache while a fresh copy loads quietly underneath, so the grid never sits on a blank skeleton once you've been here before.</p>
+      <p>On top of that, bytes.io registers a service worker that caches the app shell (HTML, CSS, JS, icons) so the site still opens with no connection, and it ships a <a href="../manifest.webmanifest">web app manifest</a> so it can be installed like a native app. If a page fails to load offline and isn't cached yet, you land on a dedicated <a href="../offline.html">offline page</a> instead of a browser error.</p>
+    </section>
+
+    <section>
+      <h2>6. Manifest history &amp; author pages</h2>
+      <p>Every library page has a "Manifest history" panel pulling the real commit log for <code>bytes.hk</code> from GitHub's API — so you can see how a package's dependencies or version evolved over time, not just its current state. Downloads-by-version bars are sorted with a spec-correct <a href="https://semver.org/#spec-item-11" target="_blank" rel="noopener">SemVer 2.0.0</a> comparator, so pre-release versions like <code>1.0.0-beta.1</code> land in the right place instead of a naive dot-split sort mangling them.</p>
+      <p>Each name in <code>@package.authors</code> links to a profile page combining that person's public GitHub profile with every bytes.io library that lists them as an author. That lookup normally comes from a prebuilt reverse index (<code>data/authors-index.json</code>, generated by <code>scripts/generate-site-data.mjs</code>) instead of scanning every manifest live on each visit; if an author was added since the index was last built, the page falls back to a live scan automatically.</p>
+    </section>
+
+    <section>
+      <h2>7. Badges</h2>
+      <p>The <a href="badge.html">badge generator</a> builds shields.io-style status badges entirely in the browser: it measures the label/message text, draws an SVG, and encodes it as a <code>data:</code> URI. That means the markdown snippet you copy into a README is fully self-contained — no third-party image host, nothing that can go down or rate-limit you.</p>
+    </section>
+
+    <section>
+      <h2>8. Recently added &amp; the Atom feed</h2>
+      <p>Because bytes.io has no backend, the <a href="recent.html">recently added</a> page tracks "first seen" dates for each library locally, in your browser — a good way to spot what's new to <em>you</em>. For a real, global publish timeline, <a href="../feed.xml">feed.xml</a> is generated server-side by <code>scripts/generate-feed.mjs</code>, a small script meant to run on a schedule (e.g. a daily GitHub Actions cron job) that diffs <code>index.json</code> against the previous feed to timestamp genuinely new entries.</p>
+    </section>
+
+    <section>
+      <h2>9. Dark mode</h2>
+      <p>The toggle in the top-right corner switches between light and dark themes and remembers your choice in <code>localStorage</code>. With no saved preference, the site follows your OS setting automatically. The switch is applied before the page paints, so there's no flash of the wrong theme on load.</p>
+    <section>
+      <h2>10. GitHub API token</h2>
+      <p>Every language breakdown, manifest fetch, commit history, and author profile comes from GitHub's API, which caps unauthenticated requests at 60/hour — easy to hit once a page starts enriching a longer <code>index.json</code>. The key icon in the top-right opens a small settings panel where you can paste a personal access token (no scopes needed, or a fine-grained read-only public-repos token); it's stored only in your browser's <code>localStorage</code>, sent only to GitHub, and raises the limit to 5,000/hour. The same panel shows how many requests you have left this hour.</p>
+    </section>
+
+    <section>
+      <h2>11. Comparing libraries</h2>
+      <p>Tick the checkbox on up to three cards on the homepage and a bar appears at the bottom of the screen — "Compare" opens a side-by-side table of language, version, license, downloads, stars, dependencies, and tags for whichever libraries you picked.</p>
+    </section>
+
+    <section>
+      <h2>12. Install command</h2>
+      <p>Every library page has an "Install" panel with a copyable <code>bytes add &lt;name&gt;</code> CLI command and the equivalent line to paste straight into your own <code>bytes.hk</code> dependencies.</p>
+    </section>
+
+    <section>
+      <h2>13. Sharing &amp; SEO</h2>
+      <p>Sharing a link to a library on Discord or Twitter used to show a bare URL, because those crawlers don't run JavaScript — <code>repo.html</code> is rendered entirely client-side. <code>scripts/generate-site-data.mjs</code> fixes that at build time: for every library with a <code>bytes.hk</code>, it generates a static page under <code>pages/lib/&lt;slug&gt;.html</code> with real Open Graph / Twitter Card tags and a branded 1200×630 preview image (drawn per-library by <code>scripts/generate-og-images.py</code>), that instantly redirects a human into the interactive page. Homepage and "recently added" cards link to these static pages automatically wherever one exists; the same build script also maintains <code>sitemap.xml</code>, and <code>robots.txt</code> points crawlers at it.</p>
+    </section>
+
+    <section>
+      <h2>14. Data freshness</h2>
+      <p>Because so much is cached, small "cached 4m ago" / "just now" labels appear next to the homepage results, the language widget, and the manifest panel on repo pages — so it's always clear whether you're looking at a live fetch or something served instantly from a previous visit while it quietly refreshes underneath.</p>
+    </section>
   </main>
 
+  <script src="../js/github.js"></script>
+  <script src="../js/a11y.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/pwa.js"></script>
+  <script src="../js/github-settings.js"></script>
+  <script>
+    registerServiceWorker("../sw.js");
+  </script>
 </body>
 </html>
