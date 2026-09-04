@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bytes.io — badge generator</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23EC4899%22/></svg>" />
+    <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="bytes.io" />
+  <meta property="og:title" content="Badge generator — bytes.io" />
+  <meta property="og:description" content="Make a self-contained status badge for your H# library's README, rendered client-side as an SVG data URI." />
+  <meta property="og:url" content="https://bytes-repository.github.io/pages/badge.html" />
+  <meta property="og:image" content="https://bytes-repository.github.io/images/og/default.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Badge generator — bytes.io" />
+  <meta name="twitter:description" content="Make a self-contained status badge for your H# library's README, rendered client-side as an SVG data URI." />
+  <meta name="twitter:image" content="https://bytes-repository.github.io/images/og/default.png" />
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <meta name="theme-color" content="#EC4899" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <script>
+    (function(){
+      try {
+        var stored = localStorage.getItem("bytesio:theme");
+        var theme = stored === "light" || stored === "dark" ? stored :
+          (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    .badge-wrap{ max-width: 720px; margin: 0 auto; padding: 48px 28px 90px; }
+    .badge-wrap h1{ font-family: var(--f-display); font-size: 28px; font-weight: 800; letter-spacing: -.02em; margin: 0 0 8px; }
+    .badge-wrap .lede{ color: var(--ink-soft); font-size: 14.5px; line-height: 1.65; margin: 0 0 32px; max-width: 58ch; }
+
+    .badge-form{
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      border: 1px solid var(--line); border-radius: var(--radius-md);
+      background: var(--bg-card); padding: 22px; box-shadow: var(--shadow-card);
+      margin-bottom: 24px;
+    }
+    .badge-field{ display: flex; flex-direction: column; gap: 6px; }
+    .badge-field label{ font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .badge-field input[type="text"]{
+      border: 1px solid var(--line); border-radius: 9px; padding: 9px 12px;
+      font-family: var(--f-body); font-size: 13.5px; background: var(--bg-soft); color: var(--ink);
+    }
+    .badge-field select{
+      border: 1px solid var(--line); border-radius: 9px; padding: 9px 12px;
+      font-family: var(--f-body); font-size: 13.5px; background: var(--bg-soft); color: var(--ink);
+      cursor: pointer;
+    }
+    .badge-field.swatches{ grid-column: 1 / -1; }
+    .swatch-row{ display: flex; gap: 8px; flex-wrap: wrap; }
+    .swatch{
+      width: 26px; height: 26px; border-radius: 50%; cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .swatch.is-active{ border-color: var(--ink); }
+
+    .badge-preview{
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px; border: 1px dashed var(--line); border-radius: var(--radius-md);
+      margin-bottom: 24px; background: var(--bg-soft);
+    }
+    .badge-preview img{ display: block; }
+
+    .snippet-block{ margin-bottom: 18px; }
+    .snippet-block h3{ font-family: var(--f-display); font-size: 13px; font-weight: 700; margin: 0 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .snippet-row{ display: flex; gap: 8px; }
+    .snippet-row textarea{
+      flex: 1; resize: none; height: 60px;
+      font-family: var(--f-mono); font-size: 12px; padding: 10px 12px;
+      border: 1px solid var(--line); border-radius: 9px; background: #14141a; color: #dcdce6;
+    }
+    .snippet-row button{
+      border: 1px solid var(--line); background: var(--bg-card); border-radius: 9px;
+      padding: 0 16px; font-size: 12.5px; font-weight: 600; color: var(--ink-soft); cursor: pointer;
+    }
+    .snippet-row button:hover{ border-color: var(--ink); color: var(--ink); }
+    .note{
+      font-size: 12.5px; color: var(--muted); background: var(--bg-soft);
+      border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+    }
+
+    @media (max-width: 640px){
+      .badge-wrap{ padding: 32px 18px 70px; }
+      .badge-wrap h1{ font-size: 23px; }
+      .badge-form{ grid-template-columns: 1fr; padding: 18px; }
+      .badge-preview{ padding: 24px 16px; overflow-x: auto; }
+      .snippet-row{ flex-direction: column; }
+      .snippet-row button{ padding: 9px 16px; align-self: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">b</span>
+        bytes.io
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html#libraries">Libraries</a>
+        <a href="recent.html">Recently added</a>
+        <a href="badge.html">Badges</a>
+        <a href="about.html">About</a>
+      </div>
+      <button class="nav-burger" id="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="nav-right">
+        <button class="gh-token-btn" data-gh-settings aria-label="GitHub API token settings" title="GitHub API token (raises the 60 req/hour limit)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M14.7 9.3a3.5 3.5 0 1 1-4.9-4.9 3.5 3.5 0 0 1 4.9 4.9Zm0 0L20 14.6M20 14.6l-1.6 1.6M20 14.6l1.6 1.6M17.4 17.2l-1.7 1.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2.4M12 19v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19 12h2.4M4.9 19l1.7-1.7M17.4 6.6l1.7-1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </button>
+        <a class="nav-cta" href="../index.html">← Back to index</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="modal-overlay" id="gh-modal" hidden role="dialog" aria-modal="true" aria-labelledby="gh-modal-title" tabindex="-1">
+    <div class="modal">
+      <h3 id="gh-modal-title">GitHub API token</h3>
+      <p>bytes.io calls GitHub's API to read languages, manifests, and commit history for each repo. Unauthenticated requests are capped at 60/hour; a personal access token raises that to 5,000/hour. The token is stored only in this browser's <code>localStorage</code> and is sent only to <code>api.github.com</code> / <code>raw.githubusercontent.com</code> — never to bytes.io or anywhere else. A token with no scopes (or a fine-grained, read-only, public-repos token) is enough.</p>
+      <input type="password" id="gh-token-input" placeholder="ghp_&hellip; or github_pat_&hellip;" autocomplete="off" />
+      <p class="token-status" id="gh-token-status"></p>
+      <div class="modal-actions">
+        <button id="gh-token-save">Save</button>
+        <button id="gh-token-clear">Clear</button>
+        <button id="gh-token-close">Close</button>
+      </div>
+      <p class="rate-note" id="gh-rate-note">Checking rate limit&hellip;</p>
+    </div>
+  </div>
+
+  <main class="badge-wrap">
+    <h1>Badge generator</h1>
+    <p class="lede">Make a status badge for your library's README — like <code>mold: bytes.io ✓</code>. Rendered fully client-side, so the snippet you copy is a self-contained image with no external dependency to go stale.</p>
+
+    <div class="badge-form">
+      <div class="badge-field">
+        <label for="b-label">Label (left side)</label>
+        <input type="text" id="b-label" value="mold" maxlength="24" />
+      </div>
+      <div class="badge-field">
+        <label for="b-message">Message (right side)</label>
+        <input type="text" id="b-message" value="bytes.io" maxlength="24" />
+      </div>
+      <div class="badge-field">
+        <label for="b-style">Style</label>
+        <select id="b-style">
+          <option value="flat">Flat</option>
+          <option value="flat-square">Flat square</option>
+          <option value="plastic">Plastic (glossy)</option>
+        </select>
+      </div>
+      <div class="badge-field">
+        <label for="b-labelcolor">Label background</label>
+        <input type="text" id="b-labelcolor" value="#4a4a58" />
+      </div>
+      <div class="badge-field swatches">
+        <label>Message color</label>
+        <div class="swatch-row" id="b-swatches"></div>
+      </div>
+    </div>
+
+    <div class="badge-preview" id="b-preview"></div>
+
+    <div class="snippet-block">
+      <h3>Markdown</h3>
+      <div class="snippet-row">
+        <textarea id="snippet-md" readonly></textarea>
+        <button data-copy-target="snippet-md">Copy</button>
+      </div>
+    </div>
+    <div class="snippet-block">
+      <h3>HTML</h3>
+      <div class="snippet-row">
+        <textarea id="snippet-html" readonly></textarea>
+        <button data-copy-target="snippet-html">Copy</button>
+      </div>
+    </div>
+
+    <p class="note">The badge is embedded as a <code>data:image/svg+xml</code> URI — no server round-trip, so it renders instantly in any README and never breaks even if bytes.io is offline. It just won't auto-update; regenerate it here if the message needs to change.</p>
+  </main>
+
+  <script src="../js/github.js"></script>
+  <script src="../js/a11y.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/pwa.js"></script>
+  <script src="../js/github-settings.js"></script>
+  <script src="../js/badge.js"></script>
+  <script>
+    registerServiceWorker("../sw.js");
+  </script>
+</body>
+</html>
