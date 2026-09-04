@@ -73,6 +73,25 @@
 .dep-item .name{ font-weight: 600; }
 .dep-item .ver{ font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
 
+/* ---- stats panel: downloads, stars, tags parsed from @stats ---- */
+.stat-figure{
+  display: flex; align-items: baseline; gap: 7px;
+  padding: 2px 0 12px;
+}
+.stat-figure-num{
+  font-family: var(--f-display); font-size: 22px; font-weight: 800; color: var(--ink);
+}
+.stat-figure-label{ font-size: 12px; color: var(--muted); }
+
+.tag-list{ display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.tag-pill{
+  display: inline-flex; align-items: center;
+  padding: 4px 10px; border-radius: 999px;
+  background: var(--bg-soft); border: 1px solid var(--line);
+  font-size: 11.5px; font-weight: 600; color: var(--ink-soft);
+  font-family: var(--f-mono);
+}
+
 .code-panel{ padding: 0; overflow: hidden; }
 .code-panel .code-head{
   display: flex; align-items: center; justify-content: space-between;
@@ -80,6 +99,16 @@
   background: var(--bg-soft);
 }
 .code-panel .code-head span{ font-family: var(--f-mono); font-size: 12.5px; color: var(--ink-soft); }
+.code-head-actions{ display: flex; align-items: center; gap: 10px; }
+.code-copy{
+  border: 1px solid var(--line); background: var(--bg-card);
+  border-radius: 999px; padding: 5px 12px;
+  font-family: var(--f-mono); font-size: 11.5px; font-weight: 600;
+  color: var(--ink-soft); cursor: pointer;
+  transition: border-color .15s ease, color .15s ease;
+}
+.code-copy:hover{ border-color: var(--ink); color: var(--ink); }
+.code-copy.is-copied{ border-color: #2da44e; color: #2da44e; }
 .code-panel pre{
   margin: 0; padding: 20px;
   font-family: var(--f-mono); font-size: 12.8px; line-height: 1.65;
@@ -95,3 +124,71 @@
 .repo-state{
   padding: 60px 0; text-align: center; color: var(--muted); font-size: 14px;
 }
+
+.author-link{ color: var(--b-pink); font-weight: 700; }
+.author-link:hover{ text-decoration: underline; }
+
+/* ---- install panel ---- */
+.install-label{ font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 6px; }
+.install-label:not(:first-child){ margin-top: 14px; }
+.install-cmd{
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  background: #14141a; border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 10px 8px 12px;
+}
+.install-cmd code{ font-family: var(--f-mono); font-size: 12px; color: #dcdce6; overflow-x: auto; white-space: nowrap; }
+.install-copy{
+  border: 1px solid var(--line); background: transparent; border-radius: 6px;
+  padding: 3px 9px; font-size: 11px; font-weight: 600; color: #a0a0b0; cursor: pointer; flex: none;
+}
+.install-copy:hover{ border-color: var(--b-pink); color: #fff; }
+
+/* ---- freshness tag next to a heading ---- */
+/* moved to styles/base.css (shared with author.html) */
+
+/* ---- downloads-by-version panel (crates.io-style) ---- */
+.version-total{ font-size: 12.5px; color: var(--muted); margin: -6px 0 14px; }
+.version-list{ display: flex; flex-direction: column; gap: 10px; }
+.version-row{ display: grid; grid-template-columns: 62px 1fr 46px; align-items: center; gap: 10px; }
+.version-tag{
+  font-family: var(--f-mono); font-size: 11.5px; font-weight: 600; color: var(--ink-soft);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.version-row.is-current .version-tag{ color: var(--ink); }
+.current-flag{
+  font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  color: #fff; background: var(--b-gradient); border-radius: 999px; padding: 1px 6px; width: fit-content;
+}
+.version-bar-track{
+  height: 7px; border-radius: 999px; background: var(--bg-soft); overflow: hidden;
+}
+.version-bar-fill{
+  height: 100%; border-radius: 999px; background: var(--b-gradient);
+  transition: width .5s cubic-bezier(.2,.8,.2,1);
+}
+.version-row.is-current .version-bar-fill{ background: var(--b-gradient); box-shadow: 0 0 0 1px rgba(236,72,153,.25); }
+.version-count{
+  font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); text-align: right;
+}
+
+/* ---- manifest history / changelog panel ---- */
+.changelog-list{ display: flex; flex-direction: column; gap: 12px; }
+.changelog-item{ padding-bottom: 12px; border-bottom: 1px solid var(--line-soft); }
+.changelog-item:last-child{ border-bottom: none; padding-bottom: 0; }
+.changelog-top{
+  display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+}
+.changelog-msg{
+  font-size: 13px; font-weight: 600; color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.changelog-msg:hover{ color: var(--b-pink); }
+.changelog-sha{
+  font-family: var(--f-mono); font-size: 11px; color: var(--muted); flex: none;
+}
+.changelog-meta{
+  display: flex; gap: 6px; margin-top: 3px;
+  font-size: 11.5px; color: var(--muted);
+}
+.changelog-meta a{ color: var(--muted); }
+.changelog-meta a:hover{ color: var(--b-pink); }
