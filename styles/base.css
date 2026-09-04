@@ -10,7 +10,7 @@
   /* neutrals */
   --ink:        #14141c;
   --ink-soft:   #4a4a58;
-  --muted:      #85859a;
+  --muted:      #6e6e85;
   --line:       #eaeaf0;
   --line-soft:  #f2f2f6;
   --bg:         #ffffff;
@@ -32,7 +32,43 @@
   --radius-lg: 22px;
   --shadow-card: 0 1px 2px rgba(20,20,28,.04), 0 8px 24px -12px rgba(20,20,28,.10);
   --shadow-pop:  0 12px 32px -8px rgba(20,20,28,.18), 0 2px 8px rgba(20,20,28,.08);
+
+  color-scheme: light;
 }
+
+/* ---------- dark mode ----------
+   Applied either because the user explicitly picked it (data-theme="dark",
+   set by theme.js and persisted in localStorage) or, absent a saved choice,
+   because the OS/browser prefers dark (prefers-color-scheme). An explicit
+   data-theme="light" always wins over the media query. */
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]):not([data-theme="dark"]){
+  --ink:        #f0f0f5;
+  --ink-soft:   #c2c2cf;
+  --muted:      #8b8b9c;
+  --line:       #2a2a34;
+  --line-soft:  #202028;
+  --bg:         #0e0e13;
+  --bg-soft:    #17171f;
+  --bg-card:    #15151c;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  --shadow-pop:  0 12px 32px -8px rgba(0,0,0,.6), 0 2px 8px rgba(0,0,0,.4);
+  color-scheme: dark;
+}}
+:root[data-theme="dark"]{
+  --ink:        #f0f0f5;
+  --ink-soft:   #c2c2cf;
+  --muted:      #8b8b9c;
+  --line:       #2a2a34;
+  --line-soft:  #202028;
+  --bg:         #0e0e13;
+  --bg-soft:    #17171f;
+  --bg-card:    #15151c;
+  --shadow-card: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  --shadow-pop:  0 12px 32px -8px rgba(0,0,0,.6), 0 2px 8px rgba(0,0,0,.4);
+  color-scheme: dark;
+}
+
+body{ transition: background-color .18s ease, color .18s ease; }
 
 *, *::before, *::after{ box-sizing: border-box; }
 html{ scroll-behavior: smooth; }
@@ -90,6 +126,14 @@ button{ font: inherit; }
 .nav-links{ display: flex; align-items: center; gap: 28px; font-size: 14.5px; font-weight: 500; color: var(--ink-soft); }
 .nav-links a{ transition: color .15s ease; }
 .nav-links a:hover{ color: var(--ink); }
+
+.nav-burger{
+  display: none; width: 34px; height: 34px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--bg-card); color: var(--ink-soft);
+  align-items: center; justify-content: center; cursor: pointer; flex: none;
+}
+.nav-burger svg{ width: 17px; height: 17px; }
+.nav-burger:hover{ border-color: var(--b-pink); color: var(--ink); }
 .nav-cta{
   border: 1px solid var(--line);
   padding: 8px 16px;
@@ -99,6 +143,76 @@ button{ font: inherit; }
   transition: border-color .15s ease, transform .15s ease;
 }
 .nav-cta:hover{ border-color: var(--b-pink); transform: translateY(-1px); }
+
+.nav-right{ display: flex; align-items: center; gap: 12px; }
+
+/* ---------- dark-mode toggle ---------- */
+.theme-toggle{
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--bg-card);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-soft); cursor: pointer; flex: none;
+  transition: border-color .15s ease, color .15s ease, transform .15s ease;
+}
+.theme-toggle:hover{ border-color: var(--b-pink); color: var(--ink); transform: translateY(-1px); }
+.theme-toggle svg{ width: 16px; height: 16px; }
+.theme-toggle .icon-moon{ display: none; }
+.theme-toggle.is-dark .icon-sun{ display: none; }
+.theme-toggle.is-dark .icon-moon{ display: block; }
+
+/* ---------- GitHub token settings button + modal ---------- */
+.gh-token-btn{
+  position: relative;
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--bg-card);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-soft); cursor: pointer; flex: none;
+  transition: border-color .15s ease, color .15s ease, transform .15s ease;
+}
+.gh-token-btn:hover{ border-color: var(--b-pink); color: var(--ink); transform: translateY(-1px); }
+.gh-token-btn svg{ width: 15px; height: 15px; }
+.gh-token-btn.has-token::after{
+  content: ""; position: absolute; top: -1px; right: -1px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #2da44e; border: 2px solid var(--bg-card);
+}
+
+.modal-overlay{
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(10,10,14,.5);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal{
+  width: 100%; max-width: 420px;
+  background: var(--bg-card); border: 1px solid var(--line);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-pop);
+  padding: 24px;
+}
+.modal h3{ font-family: var(--f-display); font-size: 17px; font-weight: 700; margin: 0 0 8px; }
+.modal p{ font-size: 13px; line-height: 1.6; color: var(--ink-soft); margin: 0 0 14px; }
+.modal input[type="password"], .modal input[type="text"]{
+  width: 100%; border: 1px solid var(--line); border-radius: 9px;
+  padding: 10px 12px; font-family: var(--f-mono); font-size: 13px;
+  background: var(--bg-soft); color: var(--ink); margin-bottom: 10px;
+}
+.modal .token-status{ font-size: 12px; color: var(--muted); margin: 0 0 16px; }
+.modal .token-status.is-active{ color: #2da44e; }
+.modal .modal-actions{ display: flex; gap: 8px; margin-bottom: 16px; }
+.modal .modal-actions button{
+  border: 1px solid var(--line); background: var(--bg-soft); border-radius: 9px;
+  padding: 8px 14px; font-size: 12.5px; font-weight: 600; color: var(--ink); cursor: pointer;
+}
+.modal .modal-actions button:hover{ border-color: var(--b-pink); }
+.modal .modal-actions button#gh-token-save{ background: var(--b-gradient); border-color: transparent; color: #fff; }
+.modal .rate-note{ font-size: 11.5px; color: var(--muted); font-family: var(--f-mono); margin: 0; }
+.retry-btn{
+  border: 1px solid var(--line); background: var(--bg-card);
+  border-radius: 999px; padding: 9px 20px;
+  font-size: 13px; font-weight: 600; color: var(--ink);
+  cursor: pointer; transition: border-color .15s ease, transform .15s ease;
+}
+.retry-btn:hover{ border-color: var(--b-pink); transform: translateY(-1px); }
 
 /* ---------- footer ---------- */
 .site-footer{
@@ -123,3 +237,59 @@ button{ font: inherit; }
   color: var(--ink-soft);
 }
 .dot{ width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.freshness-tag{ font-size: 10.5px; font-weight: 500; color: var(--muted); text-transform: none; letter-spacing: normal; display: block; }
+
+/* ---------- responsive: nav, modals, general shared chrome ---------- */
+@media (max-width: 760px){
+  .wrap{ padding: 0 18px; }
+  .site-nav .wrap{ height: 60px; }
+  .brand{ font-size: 17px; }
+
+  .nav-burger{ display: flex; order: 3; }
+  .nav-links{
+    display: none; position: absolute; top: 60px; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 0;
+    background: var(--bg-card); border-bottom: 1px solid var(--line);
+    box-shadow: var(--shadow-pop); padding: 6px 18px 14px;
+  }
+  .nav-links.is-open{ display: flex; }
+  .nav-links a{ padding: 12px 4px; border-bottom: 1px solid var(--line-soft); }
+  .nav-links a:last-child{ border-bottom: none; }
+
+  .nav-right{ gap: 8px; }
+  .nav-cta{ padding: 7px 12px; font-size: 12.5px; }
+  .nav-cta span.cta-full{ display: none; }
+
+  .modal{ padding: 18px; max-height: 88vh; overflow-y: auto; }
+  .modal-overlay{ padding: 12px; align-items: flex-end; }
+  .modal{ width: 100%; max-width: 100%; border-radius: 16px 16px 0 0; }
+}
+
+@media (max-width: 420px){
+  .nav-links{ top: 56px; }
+}
+
+/* ---------- service-worker update toast ---------- */
+.sw-toast{
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px);
+  z-index: 80; opacity: 0;
+  display: flex; align-items: center; gap: 14px;
+  background: var(--ink); color: #fff;
+  border-radius: 999px; padding: 10px 10px 10px 18px;
+  box-shadow: var(--shadow-pop);
+  font-size: 13px; max-width: 92vw;
+  transition: opacity .2s ease, transform .2s ease;
+}
+:root[data-theme="dark"] .sw-toast{ background: #f0f0f5; color: #0e0e13; }
+.sw-toast.is-visible{ opacity: 1; transform: translateX(-50%) translateY(0); }
+.sw-toast span{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sw-toast button{
+  border: none; border-radius: 999px; cursor: pointer; font-weight: 600; flex: none;
+}
+.sw-toast #sw-update-btn{
+  background: var(--b-gradient); color: #fff; padding: 7px 16px; font-size: 12.5px;
+}
+.sw-toast #sw-update-dismiss{
+  background: transparent; color: inherit; opacity: .6; width: 26px; height: 26px; font-size: 13px;
+}
+.sw-toast #sw-update-dismiss:hover{ opacity: 1; }
