@@ -112,6 +112,7 @@
   display: flex; flex-wrap: wrap; gap: 8px;
   margin-bottom: 20px;
 }
+.tag-bar[hidden]{ display: none; }
 .tag-chip{
   border: 1px solid var(--line); background: var(--bg-card);
   border-radius: 999px; padding: 6px 13px;
@@ -231,6 +232,7 @@
   box-shadow: var(--shadow-pop); padding: 10px 12px 10px 20px;
   font-size: 13px; color: var(--ink-soft);
 }
+.compare-bar[hidden]{ display: none; }
 .compare-bar.is-shake{ animation: cmpshake .4s ease; color: var(--b-pink); }
 @keyframes cmpshake{ 25%{ transform: translateX(-50%) translateX(-4px);} 75%{ transform: translateX(-50%) translateX(4px);} }
 .compare-bar-actions{ display: flex; gap: 8px; }
