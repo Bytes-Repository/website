@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bytes.io — author</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%23EC4899%22/></svg>" />
+    <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="bytes.io" />
+  <meta property="og:title" content="bytes.io — author profile" />
+  <meta property="og:description" content="GitHub profile and bytes.io libraries for an H# library author." />
+  <meta property="og:url" content="https://bytes-repository.github.io/pages/author.html" />
+  <meta property="og:image" content="https://bytes-repository.github.io/images/og/default.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="bytes.io — author profile" />
+  <meta name="twitter:description" content="GitHub profile and bytes.io libraries for an H# library author." />
+  <meta name="twitter:image" content="https://bytes-repository.github.io/images/og/default.png" />
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <meta name="theme-color" content="#EC4899" />
+  <link rel="stylesheet" href="../styles/base.css" />
+  <link rel="stylesheet" href="../styles/index.css" />
+  <script>
+    (function(){
+      try {
+        var stored = localStorage.getItem("bytesio:theme");
+        var theme = stored === "light" || stored === "dark" ? stored :
+          (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    .author-wrap{ max-width: 760px; margin: 0 auto; padding: 48px 28px 90px; }
+    .author-crumb{ font-size: 13px; color: var(--muted); margin: 0 0 22px; }
+    .author-crumb a:hover{ color: var(--ink); }
+    .author-head{
+      display: flex; align-items: center; gap: 18px;
+      border: 1px solid var(--line); border-radius: var(--radius-md);
+      background: var(--bg-card); padding: 22px; box-shadow: var(--shadow-card);
+      margin-bottom: 28px;
+    }
+    .author-avatar{ width: 76px; height: 76px; border-radius: 50%; flex: none; background: var(--bg-soft); }
+    .author-head h1{ font-family: var(--f-display); font-size: 22px; font-weight: 800; margin: 0 0 3px; }
+    .author-head .handle{ font-family: var(--f-mono); font-size: 13px; color: var(--muted); margin: 0 0 8px; }
+    .author-head .bio{ font-size: 13.5px; color: var(--ink-soft); margin: 0 0 10px; max-width: 48ch; }
+    .author-stats{ display: flex; gap: 18px; font-size: 12.5px; color: var(--muted); }
+    .author-stats b{ color: var(--ink); font-family: var(--f-mono); }
+    .author-section h2{ font-family: var(--f-display); font-size: 17px; font-weight: 700; margin: 0 0 14px; }
+
+    @media (max-width: 560px){
+      .author-wrap{ padding: 32px 18px 70px; }
+      .author-head{ flex-direction: column; align-items: flex-start; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <div class="wrap">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">b</span>
+        bytes.io
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="../index.html#libraries">Libraries</a>
+        <a href="recent.html">Recently added</a>
+        <a href="badge.html">Badges</a>
+        <a href="about.html">About</a>
+      </div>
+      <button class="nav-burger" id="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="nav-right">
+        <button class="gh-token-btn" data-gh-settings aria-label="GitHub API token settings" title="GitHub API token (raises the 60 req/hour limit)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M14.7 9.3a3.5 3.5 0 1 1-4.9-4.9 3.5 3.5 0 0 1 4.9 4.9Zm0 0L20 14.6M20 14.6l-1.6 1.6M20 14.6l1.6 1.6M17.4 17.2l-1.7 1.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v2.4M12 19v2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M2.5 12h2.4M19 12h2.4M4.9 19l1.7-1.7M17.4 6.6l1.7-1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </button>
+        <a class="nav-cta" href="../index.html">← Back to index</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="modal-overlay" id="gh-modal" hidden role="dialog" aria-modal="true" aria-labelledby="gh-modal-title" tabindex="-1">
+    <div class="modal">
+      <h3 id="gh-modal-title">GitHub API token</h3>
+      <p>bytes.io calls GitHub's API to read languages, manifests, and commit history for each repo. Unauthenticated requests are capped at 60/hour; a personal access token raises that to 5,000/hour. The token is stored only in this browser's <code>localStorage</code> and is sent only to <code>api.github.com</code> / <code>raw.githubusercontent.com</code> — never to bytes.io or anywhere else. A token with no scopes (or a fine-grained, read-only, public-repos token) is enough.</p>
+      <input type="password" id="gh-token-input" placeholder="ghp_&hellip; or github_pat_&hellip;" autocomplete="off" />
+      <p class="token-status" id="gh-token-status"></p>
+      <div class="modal-actions">
+        <button id="gh-token-save">Save</button>
+        <button id="gh-token-clear">Clear</button>
+        <button id="gh-token-close">Close</button>
+      </div>
+      <p class="rate-note" id="gh-rate-note">Checking rate limit&hellip;</p>
+    </div>
+  </div>
+
+  <main class="author-wrap">
+    <p class="author-crumb"><a href="../index.html">Libraries</a> / <span id="author-crumb-name">author</span></p>
+
+    <div class="author-head" id="author-head">
+      <div class="author-avatar"></div>
+      <div>
+        <h1 id="author-name">Loading…</h1>
+        <p class="handle" id="author-handle"></p>
+      </div>
+    </div>
+
+    <section class="author-section">
+      <h2>Libraries on bytes.io</h2>
+      <p class="freshness-tag" id="author-libs-note" style="margin:-8px 0 14px;"></p>
+      <div class="lib-grid" id="author-libs">
+        <div class="skel"></div>
+        <div class="skel"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/github.js"></script>
+  <script src="../js/a11y.js"></script>
+  <script src="../js/langcolors.js"></script>
+  <script src="../js/hk-parser.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/index-data.js"></script>
+  <script src="../js/enrich.js"></script>
+  <script src="../js/theme.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/pwa.js"></script>
+  <script src="../js/github-settings.js"></script>
+  <script src="../js/author.js"></script>
+  <script>
+    registerServiceWorker("../sw.js");
+  </script>
+</body>
+</html>
