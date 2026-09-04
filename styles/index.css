@@ -86,6 +86,43 @@
   font-size: 13px; color: var(--muted);
 }
 .stat-row b{ color: var(--ink); font-family: var(--f-mono); font-weight: 600; }
+.cache-note{
+  margin: 10px 0 0; text-align: center; font-size: 12px; color: var(--muted);
+  min-height: 16px;
+}
+
+/* ---------- filters (language / sort / tags) ---------- */
+.filter-bar{
+  display: flex; flex-wrap: wrap; gap: 16px;
+  margin-bottom: 14px;
+}
+.filter-field{
+  display: flex; flex-direction: column; gap: 5px;
+  font-size: 11.5px; color: var(--muted); font-weight: 600;
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.filter-field select{
+  font-family: var(--f-body); font-size: 13.5px; font-weight: 500;
+  color: var(--ink); text-transform: none; letter-spacing: normal;
+  border: 1px solid var(--line); background: var(--bg-card);
+  border-radius: 10px; padding: 8px 12px; min-width: 168px;
+  cursor: pointer;
+}
+.tag-bar{
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 20px;
+}
+.tag-chip{
+  border: 1px solid var(--line); background: var(--bg-card);
+  border-radius: 999px; padding: 6px 13px;
+  font-family: var(--f-mono); font-size: 11.5px; font-weight: 600;
+  color: var(--ink-soft); cursor: pointer;
+  transition: border-color .15s ease, color .15s ease, background .15s ease;
+}
+.tag-chip:hover{ border-color: var(--b-pink); color: var(--ink); }
+.tag-chip.is-active{
+  background: var(--b-gradient); border-color: transparent; color: #fff;
+}
 
 /* ---------- library section ---------- */
 .lib-section{ padding: 20px 0 40px; }
@@ -139,15 +176,98 @@
   margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5;
   min-height: 34px;
 }
+.lib-card-tags{ display: flex; flex-wrap: wrap; gap: 5px; margin-top: -4px; }
+.lib-card-tags .tag-pill{
+  font-family: var(--f-mono); font-size: 10.5px; font-weight: 600;
+  color: var(--muted); background: var(--bg-soft); border: 1px solid var(--line);
+  border-radius: 999px; padding: 3px 8px;
+}
 .lib-card-foot{
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
   margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line-soft);
+  flex-wrap: wrap;
 }
 .lib-card-foot .go{
   font-size: 12.5px; font-weight: 600; color: var(--ink-soft);
   display: flex; align-items: center; gap: 4px;
 }
 .lib-card:hover .lib-card-foot .go{ color: var(--b-pink); }
+.lib-card-metrics{
+  display: flex; gap: 10px; font-size: 11.5px; color: var(--muted);
+  font-family: var(--f-mono);
+}
+
+/* ---------- footer links row ---------- */
+.footer-links{ display: flex; gap: 18px; flex-wrap: wrap; }
+
+/* ---------- compare: checkbox on cards ---------- */
+.lib-card{ position: relative; }
+.lib-card-link{ display: contents; } /* card children flow as before; the <a> itself no longer needs its own box styles */
+.compare-check{
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  width: 22px; height: 22px; cursor: pointer;
+}
+.compare-check input{ position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.compare-check span{
+  display: block; width: 100%; height: 100%; border-radius: 6px;
+  border: 1.5px solid var(--line); background: var(--bg-card);
+  transition: border-color .15s ease, background .15s ease;
+}
+.compare-check input:checked + span{
+  background: var(--b-gradient); border-color: transparent;
+}
+.compare-check input:checked + span::after{
+  content: ""; display: block; margin: 4px auto 0; width: 10px; height: 6px;
+  border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg);
+}
+.lib-card.is-comparing{ box-shadow: 0 0 0 2px var(--b-pink), var(--shadow-card); border-radius: var(--radius-md); }
+
+/* ---------- compare: floating bar ---------- */
+.compare-bar{
+  position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+  z-index: 60;
+  display: flex; align-items: center; gap: 16px;
+  background: var(--bg-card); border: 1px solid var(--line); border-radius: 999px;
+  box-shadow: var(--shadow-pop); padding: 10px 12px 10px 20px;
+  font-size: 13px; color: var(--ink-soft);
+}
+.compare-bar.is-shake{ animation: cmpshake .4s ease; color: var(--b-pink); }
+@keyframes cmpshake{ 25%{ transform: translateX(-50%) translateX(-4px);} 75%{ transform: translateX(-50%) translateX(4px);} }
+.compare-bar-actions{ display: flex; gap: 8px; }
+.compare-bar-actions button{
+  border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px;
+  font-size: 12.5px; font-weight: 600; cursor: pointer; background: var(--bg-soft); color: var(--ink);
+}
+.compare-bar-actions #compare-open{ background: var(--b-gradient); border-color: transparent; color: #fff; }
+.compare-bar-actions button:hover{ filter: brightness(1.05); }
+
+/* ---------- compare: modal table ---------- */
+.compare-modal{ max-width: 900px; width: 94vw; max-height: 82vh; overflow: auto; }
+.compare-modal-head{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.compare-modal-head h3{ margin: 0; }
+.modal-x{
+  border: none; background: transparent; font-size: 15px; color: var(--muted);
+  cursor: pointer; width: 30px; height: 30px; border-radius: 50%;
+}
+.modal-x:hover{ background: var(--bg-soft); color: var(--ink); }
+#compare-table-wrap{ overflow-x: auto; }
+.cmp-table{ display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; min-width: 480px; }
+.cmp-row{ display: grid; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line-soft); align-items: start; }
+.cmp-row:last-child{ border-bottom: none; }
+.cmp-row:nth-child(odd){ background: var(--bg-soft); }
+.cmp-label{ font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); align-self: center; }
+.cmp-cell{ font-size: 13px; color: var(--ink); word-break: break-word; }
+.cmp-empty{ color: var(--muted); }
+.cmp-deps{ font-family: var(--f-mono); font-size: 11.5px; line-height: 1.7; }
+.cmp-dep-ver{ color: var(--muted); }
+
+@media (max-width: 640px){
+  .hero{ padding: 48px 0 30px; }
+  .filter-bar{ gap: 12px; }
+  .filter-field select{ min-width: 0; width: 100%; }
+  .compare-bar{ left: 12px; right: 12px; bottom: 12px; transform: none; width: auto; justify-content: space-between; }
+  .compare-modal{ width: 100%; }
+}
 
 /* skeleton / empty / error states */
 .skel{
