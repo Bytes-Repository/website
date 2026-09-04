@@ -42,6 +42,13 @@
 .lang-bar span.is-hsharp{
   background-image: linear-gradient(180deg, var(--hsharp-glow) 0%, var(--hsharp-1) 35%, var(--hsharp-2) 100%);
 }
+/* very light/white language swatches need a visible edge against the white widget bg */
+.lang-bar span.is-light{
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.dot.is-light{
+  box-shadow: inset 0 0 0 1px var(--line);
+}
 
 .lang-legend{
   display: flex; flex-wrap: wrap; gap: 6px 14px;
