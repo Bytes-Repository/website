@@ -30,7 +30,8 @@ function parseBlockBody(body) {
   for (const line of lines) {
     const idx = line.indexOf(":");
     if (idx === -1) continue;
-    const key = line.slice(0, idx).trim();
+    let key = line.slice(0, idx).trim();
+    if (key.startsWith('"') && key.endsWith('"') && key.length >= 2) key = key.slice(1, -1);
     const rawValue = line.slice(idx + 1).trim().replace(/,$/, "");
     entries[key] = parseValue(rawValue);
   }
