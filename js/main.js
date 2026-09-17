@@ -54,7 +54,7 @@ function cardHtml(lib) {
   const langColor = lang ? (typeof colorForLanguage === "function" ? colorForLanguage(lang) : "var(--b-pink)") : "var(--b-pink)";
   const desc =
     data?.description ||
-    `Library manifest served from <code style="font-family:var(--f-mono);font-size:12px;">bytes.hk</code> at the repo root.`;
+    `Library manifest served from <code style="font-family:var(--f-mono);font-size:12px;">Bytes.hk</code> at the repo root.`;
   const stars = formatCount(data?.stars);
   const downloads = formatCount(data?.downloads);
   const tags = (data?.tags || []).slice(0, 3);
