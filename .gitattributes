@@ -1,0 +1,7 @@
+*.xml linguist-detectable=true
+*.xml linguist-documentation=false
+*.xml linguist-language=XML
+
+*.json linguist-detectable=true
+*.json linguist-documentation=false
+*.json linguist-language=JSON
