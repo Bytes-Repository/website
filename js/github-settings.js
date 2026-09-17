@@ -26,10 +26,16 @@ function initGithubSettings() {
 
   async function refreshRateLimit() {
     if (!rateNote) return;
-    rateNote.textContent = "Checking rate limit…";
+    const known = typeof getKnownRateLimit === "function" ? getKnownRateLimit() : null;
+    if (known) {
+      const resetTime = known.resetAt ? new Date(known.resetAt).toLocaleTimeString() : "soon";
+      rateNote.textContent = `${known.remaining}${known.limit != null ? ` / ${known.limit}` : ""} GitHub API requests left this hour (resets ${resetTime}) — checking for the latest…`;
+    } else {
+      rateNote.textContent = "Checking rate limit…";
+    }
     const core = await githubRateLimit();
     if (!core) {
-      rateNote.textContent = "Couldn't check the current rate limit right now.";
+      if (!known) rateNote.textContent = "Couldn't check the current rate limit right now.";
       return;
     }
     const resetTime = new Date(core.reset * 1000).toLocaleTimeString();
