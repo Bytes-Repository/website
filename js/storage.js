@@ -3,10 +3,13 @@ const CACHE_PREFIX = "bytesio:cache:";
 const TTL = {
   INDEX: 10 * 60 * 1000, // 10 min — index.json
   ENRICH: 6 * 60 * 60 * 1000, // 6h — per-repo language / manifest / commit data
-  COMMITS: 30 * 60 * 1000, // 30 min — bytes.hk changelog
+  COMMITS: 45 * 60 * 1000, // 45 min — bytes.hk changelog
   USER: 60 * 60 * 1000, // 1h — GitHub user profile
-  MANIFEST: 15 * 60 * 1000, // 15 min — raw bytes.hk contents on the repo page
-  LANGS: 60 * 60 * 1000, // 1h — language breakdown on the repo page
+  MANIFEST: 45 * 60 * 1000, // 45 min — raw Bytes.hk contents on the repo page
+  LANGS: 2 * 60 * 60 * 1000, // 2h — language breakdown on the repo page
+  REPO_META: 2 * 60 * 60 * 1000, // 2h — GitHub repo metadata (description, stars, default branch, ...)
+  TREE: 2 * 60 * 60 * 1000, // 2h — recursive git tree, shared by language detection + the source browser
+  README: 45 * 60 * 1000, // 45 min — rendered README source
 };
 
 function cacheGet(key) {
