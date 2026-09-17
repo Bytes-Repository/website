@@ -8,12 +8,12 @@
     <meta property="og:type" content="website" />
   <meta property="og:site_name" content="bytes.io" />
   <meta property="og:title" content="bytes.io — library manifest" />
-  <meta property="og:description" content="Browse an H# library's bytes.hk manifest, dependencies, languages, and download stats on bytes.io." />
+  <meta property="og:description" content="Browse an H# library's README, source code, Bytes.hk manifest, dependencies, languages, and download stats on bytes.io." />
   <meta property="og:url" content="https://bytes-repository.github.io/pages/repo.html" />
   <meta property="og:image" content="https://bytes-repository.github.io/images/og/default.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="bytes.io — library manifest" />
-  <meta name="twitter:description" content="Browse an H# library's bytes.hk manifest, dependencies, languages, and download stats on bytes.io." />
+  <meta name="twitter:description" content="Browse an H# library's README, source code, Bytes.hk manifest, dependencies, languages, and download stats on bytes.io." />
   <meta name="twitter:image" content="https://bytes-repository.github.io/images/og/default.png" />
   <link rel="manifest" href="../manifest.webmanifest" />
   <meta name="theme-color" content="#EC4899" />
@@ -97,6 +97,16 @@
       </div>
     </header>
 
+    <section class="panel readme-panel" id="panel-readme">
+      <div class="readme-panel-head">
+        <h3>README</h3>
+        <a href="#" id="readme-source-link" class="readme-source-link" target="_blank" rel="noopener" hidden>View source ↗</a>
+      </div>
+      <div class="readme-body" id="readme-body">
+        <p style="color:var(--muted);font-size:13px;">Loading README…</p>
+      </div>
+    </section>
+
     <div class="repo-body">
       <aside>
         <div class="panel" id="panel-package"><h3>Package</h3></div>
@@ -110,15 +120,33 @@
 
       <section class="panel code-panel">
         <div class="code-head">
-          <span id="hk-code-head">bytes.hk</span>
+          <span id="hk-code-head">Bytes.hk</span>
           <div class="code-head-actions">
-            <button class="code-copy" id="hk-code-copy" title="Copy bytes.hk">Copy</button>
+            <button class="code-copy" id="hk-code-copy" title="Copy Bytes.hk">Copy</button>
             <span class="pill">manifest</span>
           </div>
         </div>
         <pre><code id="hk-code"></code></pre>
       </section>
     </div>
+
+    <section class="panel src-panel" id="panel-source">
+      <div class="src-head">
+        <h3>Source</h3>
+        <div class="src-head-actions">
+          <input type="search" id="src-filter" class="src-filter" placeholder="Filter files…" autocomplete="off" aria-label="Filter files" />
+          <span class="pill" id="src-branch-pill"></span>
+        </div>
+      </div>
+      <div class="src-body">
+        <nav class="src-tree" id="src-tree" aria-label="Repository files">
+          <p style="color:var(--muted);font-size:13px;">Loading file tree…</p>
+        </nav>
+        <div class="src-view" id="src-view">
+          <p class="src-placeholder">Select a file to preview it.</p>
+        </div>
+      </div>
+    </section>
   </div>
 
   <div class="lang-widget" id="lang-widget">
@@ -141,6 +169,8 @@
   <script src="../js/semver-lite.js"></script>
   <script src="../js/storage.js"></script>
   <script src="../js/enrich.js"></script>
+  <script src="../js/markdown-lite.js"></script>
+  <script src="../js/source-browser.js"></script>
   <script src="../js/theme.js"></script>
   <script src="../js/nav.js"></script>
   <script src="../js/pwa.js"></script>
