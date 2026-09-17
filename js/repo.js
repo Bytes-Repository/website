@@ -21,11 +21,15 @@ const els = {
   widgetFreshness: document.getElementById("lang-widget-freshness"),
   widgetToggle: document.getElementById("lang-widget-toggle"),
   changelogPanel: document.getElementById("panel-changelog"),
+  readmeBody: document.getElementById("readme-body"),
+  readmeSourceLink: document.getElementById("readme-source-link"),
 };
 
-// ownerRepoFromUrl is defined once in js/enrich.js (loaded before this file).
+// ownerRepoFromUrl, fetchRepoMeta, manifestCandidateUrls, uniq are defined
+// once in js/enrich.js (loaded before this file).
 
 let currentIds = null;
+let currentRepoMeta = null; // GitHub repo metadata: description, stars, default branch, ...
 
 function init() {
   if (!repoName || !repoUrl) {
@@ -43,6 +47,92 @@ function init() {
   loadManifest(currentIds);
   loadLanguages(currentIds);
   loadChangelog(currentIds);
+  loadReadme(currentIds);
+  initSourceBrowser(currentIds);
+}
+
+/* ------------------------------------------------------------------ readme */
+
+const README_FILENAMES = ["README.md", "Readme.md", "readme.md", "README.MD", "README.markdown"];
+const README_PLAINTEXT_FILENAMES = ["README", "README.txt", "README.rst"];
+
+/** Fetches and renders the repo's README, crates.io-style — the main "what is this" content on the page. */
+async function loadReadme(ids) {
+  if (!els.readmeBody) return;
+  if (!ids) return renderReadmeError("Malformed repository URL.");
+
+  const cacheKey = `readme:${ids.owner}/${ids.repo}`;
+  const fresh = cacheGet(cacheKey);
+  if (fresh) {
+    // Still within TTL.README — no network calls needed at all.
+    renderReadme(fresh);
+    return;
+  }
+
+  const cached = cacheGetStale(cacheKey);
+  if (cached) renderReadme(cached);
+
+  // Independent of loadManifest's own fetchRepoMeta call — fetchRepoMeta
+  // dedupes concurrent in-flight requests for the same repo, so this
+  // doesn't cost an extra GitHub API call when both run at once.
+  const meta = await fetchRepoMeta(ids);
+  if (!currentRepoMeta) currentRepoMeta = meta;
+  const branches = uniq([meta?.default_branch, "main", "master"]);
+  const candidates = [];
+  for (const branch of branches) {
+    for (const file of README_FILENAMES) candidates.push({ branch, file, plain: false });
+    for (const file of README_PLAINTEXT_FILENAMES) candidates.push({ branch, file, plain: true });
+  }
+
+  for (const { branch, file, plain } of candidates) {
+    try {
+      const res = await githubFetch(`https://raw.githubusercontent.com/${ids.owner}/${ids.repo}/${branch}/${file}`, {
+        cache: "no-store",
+      });
+      if (!res.ok) continue;
+      const text = await res.text();
+      const result = { text, plain, branch, file };
+      cacheSet(cacheKey, result, TTL.README);
+      renderReadme(result);
+      return;
+    } catch {
+      /* try next candidate */
+    }
+  }
+  if (!cached) renderReadmeError("No README found at the repo root.");
+}
+
+function renderReadme(result) {
+  const { text, plain, branch, file } = result;
+  const ids = currentIds;
+
+  if (els.readmeSourceLink && ids) {
+    els.readmeSourceLink.href = `https://github.com/${ids.owner}/${ids.repo}/blob/${branch}/${file}`;
+    els.readmeSourceLink.hidden = false;
+  }
+
+  if (plain) {
+    els.readmeBody.innerHTML = `<pre class="readme-plain">${escapeHtml(text)}</pre>`;
+    return;
+  }
+
+  try {
+    els.readmeBody.innerHTML = renderMarkdown(text, { owner: ids?.owner, repo: ids?.repo, branch });
+  } catch (err) {
+    console.error("[bytes.io] README render failed:", err);
+    els.readmeBody.innerHTML = `<pre class="readme-plain">${escapeHtml(text)}</pre>`;
+  }
+}
+
+function renderReadmeError(message) {
+  els.readmeBody.innerHTML = `
+    <p style="color:var(--muted);font-size:13px;margin:0 0 10px;">${escapeHtml(message)}</p>
+    <button class="retry-btn" id="retry-readme">Try again</button>
+  `;
+  document.getElementById("retry-readme")?.addEventListener("click", () => {
+    els.readmeBody.innerHTML = `<p style="color:var(--muted);font-size:13px;">Loading README…</p>`;
+    loadReadme(currentIds);
+  });
 }
 
 /* ---------------------------------------------------------------- manifest */
@@ -51,17 +141,40 @@ async function loadManifest(ids) {
   if (!ids) return renderManifestError("Malformed repository URL.");
 
   const cacheKey = `manifest:${ids.owner}/${ids.repo}`;
-  const cached = cacheGetStale(cacheKey);
-  if (cached) {
-    renderManifest(cached);
-    setFreshness(els.codeHead, cacheAge(cacheKey), "bytes.hk");
+  // Guard against a stale localStorage entry from an older version of this
+  // site, which cached the manifest as a plain string instead of
+  // { text, filename }.
+  const isValidShape = (v) => v && typeof v === "object" && "text" in v;
+
+  const fresh = cacheGet(cacheKey);
+  if (isValidShape(fresh)) {
+    // Still within TTL.MANIFEST — render it and stop. No network calls at
+    // all, not even fetchRepoMeta for the branch, since re-checking a
+    // manifest we already know is current wastes budget for no benefit.
+    renderManifest(fresh.text, fresh.filename);
+    setFreshness(els.codeHead, cacheAge(cacheKey), fresh.filename || "Bytes.hk");
+    return;
   }
 
-  const branches = ["main", "master"];
-  const candidates = branches.flatMap((branch) => [
-    `https://raw.githubusercontent.com/${ids.owner}/${ids.repo}/${branch}/bytes.hk`,
-    `https://cdn.jsdelivr.net/gh/${ids.owner}/${ids.repo}@${branch}/bytes.hk`,
-  ]);
+  const rawStale = cacheGetStale(cacheKey);
+  const cached = isValidShape(rawStale) ? rawStale : null;
+  if (cached) {
+    renderManifest(cached.text, cached.filename);
+    setFreshness(els.codeHead, cacheAge(cacheKey), cached.filename || "Bytes.hk");
+  }
+
+  // Repo metadata (real GitHub description, stars, default branch, ...) is
+  // fetched up front: it tells us which branch to check first, and its
+  // `description` is what we fall back to if the manifest is missing one
+  // or can't be found at all — this is the repo's actual GitHub
+  // description, distinct from anything declared inside Bytes.hk.
+  currentRepoMeta = await fetchRepoMeta(ids);
+  if (!cached) {
+    els.desc.textContent = currentRepoMeta?.description || "Fetching manifest…";
+  }
+
+  const branches = uniq([currentRepoMeta?.default_branch, "main", "master"]);
+  const candidates = manifestCandidateUrls(ids, branches);
 
   const failures = [];
   for (const url of candidates) {
@@ -73,18 +186,21 @@ async function loadManifest(ids) {
         continue;
       }
       const text = await res.text();
-      console.info(`[bytes.io] bytes.hk loaded from ${new URL(url).hostname}`);
-      cacheSet(cacheKey, text, TTL.MANIFEST);
-      renderManifest(text);
-      setFreshness(els.codeHead, 0, "bytes.hk");
+      const filename = url.split("/").pop();
+      console.info(`[bytes.io] ${filename} loaded from ${new URL(url).hostname}`);
+      cacheSet(cacheKey, { text, filename }, TTL.MANIFEST);
+      renderManifest(text, filename);
+      setFreshness(els.codeHead, 0, filename);
       return;
     } catch (err) {
       failures.push(`${new URL(url).hostname} → ${err.message}`);
     }
   }
-  console.error("[bytes.io] failed to load bytes.hk:", failures.join(" | "));
+  console.error("[bytes.io] failed to load Bytes.hk:", failures.join(" | "));
   if (!cached) {
-    renderManifestError("No bytes.hk found at the repo root (checked main and master, raw + jsDelivr).");
+    renderManifestError(
+      `No Bytes.hk (or bytes.hk) found at the repo root (checked ${branches.join(", ")}, raw + jsDelivr).`
+    );
   }
 }
 
@@ -95,13 +211,15 @@ function setFreshness(el, ageMs, label) {
   el.textContent = label ? `${label} · ${suffix}` : `· ${suffix}`;
 }
 
-function renderManifest(source) {
+function renderManifest(source, filename) {
   const parsed = parseBytesHk(source);
   const pkg = parsed.package || {};
   const deps = parsed.deps || {};
   const build = parsed.build || {};
 
-  els.desc.textContent = pkg.description || "No description in bytes.hk.";
+  // Manifest description wins when present; otherwise fall back to the
+  // repo's real GitHub description, then a generic note.
+  els.desc.textContent = pkg.description || currentRepoMeta?.description || "No description available.";
 
   const authorList = Array.isArray(pkg.authors) ? pkg.authors : pkg.authors ? [pkg.authors] : [];
 
@@ -127,20 +245,23 @@ function renderManifest(source) {
 
   els.buildPanel.innerHTML = `
     <h3>Build</h3>
+    ${row("language", build.lang)}
     ${row("entry", build.entry)}
+    ${row("output", build.output)}
+    ${row("emit", build.emit)}
     ${row("target", build.target)}
   `;
 
   renderInstallPanel(pkg, currentIds);
-  renderStatsPanel(parsed.stats || {});
+  renderStatsPanel(parsed.stats || {}, currentRepoMeta);
   renderVersionsPanel(parsed.downloads || {}, pkg.version);
 
-  els.codeHead.textContent = "bytes.hk";
+  els.codeHead.textContent = filename || "Bytes.hk";
   els.code.innerHTML = highlightBytesHk(source);
   els.code.dataset.raw = source;
 }
 
-/** Renders a copyable "how to install" command using the package name from bytes.hk. */
+/** Renders a copyable "how to install" command using the package name from Bytes.hk. */
 function renderInstallPanel(pkg, ids) {
   if (!els.installPanel) return;
   const name = pkg.name || (ids ? ids.repo : repoName);
@@ -156,7 +277,7 @@ function renderInstallPanel(pkg, ids) {
       <code>${escapeHtml(cliCmd)}</code>
       <button class="install-copy" data-copy="${escapeHtml(cliCmd)}" title="Copy">Copy</button>
     </div>
-    <p class="install-label">Or add to your bytes.hk</p>
+    <p class="install-label">Or add to your Bytes.hk</p>
     <div class="install-cmd">
       <code>${escapeHtml(manifestSnippet)}</code>
       <button class="install-copy" data-copy="${escapeHtml(manifestSnippet)}" title="Copy">Copy</button>
@@ -177,18 +298,24 @@ function renderInstallPanel(pkg, ids) {
   });
 }
 
-/** Renders the optional @stats block from bytes.hk: downloads, stars, tags. */
-function renderStatsPanel(stats) {
+/** Renders the optional [stats] block from Bytes.hk (downloads, tags), plus
+ *  live GitHub stars/forks — falling back to GitHub's numbers for stars
+ *  when the manifest doesn't declare its own [stats] -> stars. */
+function renderStatsPanel(stats, meta) {
   if (!els.statsPanel) return;
 
   const downloads = stats.downloads;
-  const tags = Array.isArray(stats.tags) ? stats.tags : [];
-  const hasAny = downloads != null || tags.length || stats.stars != null;
+  const tags = Array.isArray(stats.tags) ? stats.tags : Array.isArray(meta?.topics) ? meta.topics : [];
+  const stars = stats.stars != null ? stats.stars : meta?.stargazers_count;
+  const forks = meta?.forks_count;
+  const openIssues = meta?.open_issues_count;
+
+  const hasAny = downloads != null || tags.length || stars != null || forks != null;
 
   if (!hasAny) {
     els.statsPanel.innerHTML = `
       <h3>Stats</h3>
-      <p style="color:var(--muted);font-size:13px;margin:0;">No @stats block in bytes.hk.</p>
+      <p style="color:var(--muted);font-size:13px;margin:0;">No [stats] block in Bytes.hk and no GitHub stats available.</p>
     `;
     return;
   }
@@ -201,7 +328,9 @@ function renderStatsPanel(stats) {
          </div>`
       : "";
 
-  const starsHtml = stats.stars != null ? row("stars", formatCount(stats.stars)) : "";
+  const starsHtml = stars != null ? row("stars", formatCount(stars)) : "";
+  const forksHtml = forks != null ? row("forks", formatCount(forks)) : "";
+  const issuesHtml = openIssues != null ? row("open issues", formatCount(openIssues)) : "";
 
   const tagsHtml = tags.length
     ? `<div class="tag-list">${tags.map((t) => `<span class="tag-pill">${t}</span>`).join("")}</div>`
@@ -211,22 +340,17 @@ function renderStatsPanel(stats) {
     <h3>Stats</h3>
     ${downloadsHtml}
     ${starsHtml}
+    ${forksHtml}
+    ${issuesHtml}
     ${tagsHtml}
   `;
 }
 
-/** Formats a raw integer as a compact count, e.g. 15234 -> "15.2k", 2100000 -> "2.1M". */
-function formatCount(n) {
-  const num = Number(n);
-  if (!Number.isFinite(num)) return String(n);
-  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
-  if (num >= 1_000) return `${(num / 1_000).toFixed(1).replace(/\.0$/, "")}k`;
-  return String(num);
-}
+/* formatCount is defined once in js/enrich.js (loaded before this file). */
 
 /* compareVersionsDesc now comes from js/semver-lite.js (spec-correct SemVer precedence). */
 
-/** Renders the optional @downloads block from bytes.hk: per-version download counts, crates.io-style. */
+/** Renders the optional [downloads] block from Bytes.hk: per-version download counts, crates.io-style. */
 function renderVersionsPanel(downloadsByVersion, currentVersion) {
   if (!els.versionsPanel) return;
 
@@ -235,7 +359,7 @@ function renderVersionsPanel(downloadsByVersion, currentVersion) {
   if (!entries.length) {
     els.versionsPanel.innerHTML = `
       <h3>Downloads by version</h3>
-      <p style="color:var(--muted);font-size:13px;margin:0;">No @downloads block in bytes.hk.</p>
+      <p style="color:var(--muted);font-size:13px;margin:0;">No [downloads] block in Bytes.hk.</p>
     `;
     return;
   }
@@ -265,23 +389,24 @@ function renderVersionsPanel(downloadsByVersion, currentVersion) {
 }
 
 function renderManifestError(message) {
-  els.desc.textContent = message;
+  // The manifest itself couldn't be found/parsed, but the repo's real
+  // GitHub description (fetched in loadManifest via fetchRepoMeta) is
+  // still worth showing at the top instead of just an error string.
+  els.desc.textContent = currentRepoMeta?.description || message;
   els.packagePanel.innerHTML = `<h3>Package</h3><p style="color:var(--muted);font-size:13px;margin:0;">Unavailable.</p>`;
   if (els.installPanel) {
     els.installPanel.innerHTML = `<h3>Install</h3><p style="color:var(--muted);font-size:13px;margin:0;">Unavailable.</p>`;
   }
   els.depsPanel.innerHTML = `<h3>Dependencies</h3><p style="color:var(--muted);font-size:13px;margin:0;">Unavailable.</p>`;
   els.buildPanel.innerHTML = `<h3>Build</h3><p style="color:var(--muted);font-size:13px;margin:0;">Unavailable.</p>`;
-  if (els.statsPanel) {
-    els.statsPanel.innerHTML = `<h3>Stats</h3><p style="color:var(--muted);font-size:13px;margin:0;">Unavailable.</p>`;
-  }
+  renderStatsPanel({}, currentRepoMeta); // still show GitHub stars/forks/topics if we have them
   if (els.versionsPanel) {
     els.versionsPanel.innerHTML = `<h3>Downloads by version</h3><p style="color:var(--muted);font-size:13px;margin:0;">Unavailable.</p>`;
   }
-  els.codeHead.textContent = "bytes.hk — not found";
-  els.code.innerHTML = `# ${message}<br/><button class="retry-btn" id="retry-manifest" style="margin-top:12px;">Try again</button>`;
+  els.codeHead.textContent = "Bytes.hk — not found";
+  els.code.innerHTML = `;; ${escapeHtml(message)}<br/><button class="retry-btn" id="retry-manifest" style="margin-top:12px;">Try again</button>`;
   document.getElementById("retry-manifest")?.addEventListener("click", () => {
-    els.desc.textContent = "Fetching manifest…";
+    els.desc.textContent = currentRepoMeta?.description || "Fetching manifest…";
     loadManifest(currentIds);
   });
 }
@@ -291,7 +416,7 @@ function row(k, v) {
   return `<div class="kv-row"><span class="k">${k}</span><span class="v">${v}</span></div>`;
 }
 
-/** Renders one @package.authors entry as a link to that author's bytes.io profile page. */
+/** Renders one [package] author entry as a link to that author's bytes.io profile page. */
 function authorLinkHtml(username) {
   const clean = String(username).replace(/^@/, "");
   return `<a class="author-link" href="author.html?u=${encodeURIComponent(clean)}">${clean}</a>`;
@@ -303,26 +428,35 @@ async function loadLanguages(ids) {
   if (!ids) return renderLangError();
 
   const cacheKey = `langs:${ids.owner}/${ids.repo}`;
+  const fresh = cacheGet(cacheKey);
+  if (fresh) {
+    renderLangWidget(fresh);
+    setFreshness(els.widgetFreshness, cacheAge(cacheKey), null);
+    return; // still within TTL.LANGS — the underlying tree fetch would also
+    // short-circuit on its own cache, but skip the whole call chain anyway
+  }
+
   const cached = cacheGetStale(cacheKey);
   if (cached) {
     renderLangWidget(cached);
     setFreshness(els.widgetFreshness, cacheAge(cacheKey), null);
   }
 
-  const [githubBytes, customBytes] = await Promise.all([
-    fetchGithubLanguages(ids),
-    fetchCustomLanguageBytes(ids),
-  ]);
+  const result = await fetchLanguageBytesFromTree(ids);
 
-  const merged = Object.assign({}, githubBytes, customBytes);
-  const total = Object.values(merged).reduce((a, b) => a + b, 0);
+  const total = Object.values(result.totals).reduce((a, b) => a + b, 0);
 
   if (!total) {
-    if (!cached) renderLangError();
+    if (!cached) {
+      console.warn(`[bytes.io] language detection found nothing for ${ids.owner}/${ids.repo}:`, {
+        treeError: result.error,
+      });
+      renderLangError(result.error === "rate-limit");
+    }
     return;
   }
 
-  const breakdown = Object.entries(merged)
+  const breakdown = Object.entries(result.totals)
     .map(([name, bytes]) => ({ name, bytes, pct: (bytes / total) * 100 }))
     .sort((a, b) => b.bytes - a.bytes);
 
@@ -331,50 +465,44 @@ async function loadLanguages(ids) {
   setFreshness(els.widgetFreshness, 0, null);
 }
 
-async function fetchGithubLanguages(ids) {
-  try {
-    const res = await githubFetch(`https://api.github.com/repos/${ids.owner}/${ids.repo}/languages`);
-    if (!res.ok) return {};
-    return await res.json();
-  } catch {
-    return {};
-  }
-}
-
-/** Scans the repo's file tree for extensions GitHub's linguist doesn't know: .h#, .h#i, .hk, .hcs, .hl */
-async function fetchCustomLanguageBytes(ids) {
+/**
+ * Computes the full language breakdown — standard languages AND the 4
+ * bytes.io/H# ones GitHub's linguist doesn't know (H#, H# Interface, hk,
+ * HackerScript, Hacker Lang) — from a single recursive file-tree listing.
+ *
+ * This used to be two separate calls: GitHub's own `/languages` endpoint
+ * for standard languages, plus our own tree scan just for the custom
+ * extensions. Merging them into one avoids spending a second
+ * api.github.com request (and a second point of failure) on every single
+ * repo page view — under the unauthenticated 60/hour limit, that second
+ * call was often the difference between the widget working and hitting
+ * "rate limit hit" for anyone browsing more than a handful of repos.
+ */
+async function fetchLanguageBytesFromTree(ids) {
   const totals = {};
-  for (const branch of ["main", "master"]) {
-    try {
-      const res = await githubFetch(
-        `https://api.github.com/repos/${ids.owner}/${ids.repo}/git/trees/${branch}?recursive=1`
-      );
-      if (!res.ok) continue;
-      const data = await res.json();
-      if (!Array.isArray(data.tree)) continue;
+  // Must resolve the repo's real default branch before building the tree
+  // candidates — reading currentRepoMeta straight off wasn't safe here:
+  // loadLanguages() runs concurrently with loadManifest() from init(), so
+  // currentRepoMeta was frequently still null at this point, silently
+  // falling back to ["main", "master"] and failing outright for any repo
+  // whose default branch is neither (fetchRepoMeta is deduped, so this
+  // costs no extra request when loadManifest already kicked it off).
+  const meta = currentRepoMeta || (await fetchRepoMeta(ids));
+  if (!currentRepoMeta) currentRepoMeta = meta;
+  const branches = uniq([meta?.default_branch, "main", "master"]);
+  const treeResult = await fetchRepoTree(ids, branches);
 
-      for (const entry of data.tree) {
-        if (entry.type !== "blob") continue;
-        const ext = extensionOf(entry.path);
-        const lang = EXTENSION_TO_LANGUAGE[ext];
-        if (!lang) continue;
-        totals[lang] = (totals[lang] || 0) + (entry.size || 0);
-      }
-      break; // stop once a branch resolves
-    } catch {
-      /* try next branch */
-    }
+  for (const entry of treeResult.entries) {
+    if (entry.type !== "blob") continue;
+    const ext = extensionOf(entry.path);
+    const lang = EXTENSION_TO_LANGUAGE[ext];
+    if (!lang) continue;
+    totals[lang] = (totals[lang] || 0) + (entry.size || 0);
   }
-  return totals;
+  return { totals, error: treeResult.error };
 }
 
-function extensionOf(path) {
-  // handles multi-char extensions like "h#" and "h#i"
-  const name = path.split("/").pop() || "";
-  const dot = name.indexOf(".");
-  if (dot === -1) return "";
-  return name.slice(dot + 1).toLowerCase();
-}
+// extensionOf is defined once in js/enrich.js (loaded before this file).
 
 function renderLangWidget(breakdown) {
   const top = breakdown[0];
@@ -418,20 +546,31 @@ function renderLangWidget(breakdown) {
   `;
 }
 
-function renderLangError() {
+function renderLangError(rateLimited) {
+  const resetNote = rateLimited && typeof rateLimitResetNote === "function" ? rateLimitResetNote() : null;
   els.widgetBody.innerHTML = `
-    <p style="color:var(--muted);margin:0 0 10px;">Couldn't determine language breakdown for this repository.</p>
-    <button class="retry-btn" id="retry-lang">Try again</button>
+    <p style="color:var(--muted);margin:0 0 10px;">${
+      rateLimited
+        ? `GitHub API rate limit hit while detecting languages.${resetNote ? ` This IP's limit ${escapeHtml(resetNote)}.` : ""}`
+        : "Couldn't determine language breakdown for this repository."
+    }</p>
+    <div style="display:flex;gap:8px;">
+      <button class="retry-btn" id="retry-lang">Try again</button>
+      ${rateLimited ? `<button class="retry-btn" id="open-gh-settings-lang">Add token</button>` : ""}
+    </div>
   `;
   document.getElementById("retry-lang")?.addEventListener("click", () => {
     els.widgetBody.innerHTML = `<p style="color:var(--muted);margin:0;">Detecting…</p>`;
     loadLanguages(currentIds);
   });
+  document.getElementById("open-gh-settings-lang")?.addEventListener("click", () => {
+    document.querySelector("[data-gh-settings]")?.click();
+  });
 }
 
 /* ---------------------------------------------------------- changelog ---- */
 
-/** Manifest "versioning": shows the real commit history for bytes.hk from GitHub. */
+/** Manifest "versioning": shows the real commit history for Bytes.hk from GitHub. */
 async function loadChangelog(ids) {
   if (!els.changelogPanel) return;
   if (!ids) return renderChangelogError("Malformed repository URL.");
@@ -440,16 +579,50 @@ async function loadChangelog(ids) {
   const cached = cacheGet(cacheKey);
   if (cached) return renderChangelog(cached);
 
-  try {
-    const res = await githubFetch(
-      `https://api.github.com/repos/${ids.owner}/${ids.repo}/commits?path=bytes.hk&per_page=8`
+  // This is the least essential of the page's api.github.com calls — the
+  // manifest, languages, and source browser all matter more. When an
+  // earlier call this session has already shown the budget is nearly
+  // gone, skip this one pre-emptively rather than spend one of the last
+  // few requests on a call that would almost certainly just 403 anyway.
+  if (typeof isRateBudgetLow === "function" && isRateBudgetLow()) {
+    const resetNote = typeof rateLimitResetNote === "function" ? rateLimitResetNote() : null;
+    return renderChangelogError(
+      `skipped to save your remaining GitHub requests${resetNote ? ` — this IP's limit ${resetNote}` : ""}`,
+      true
     );
-    if (res.status === 403) {
-      return renderChangelogError("rate limit hit — add a GitHub token in settings", true);
+  }
+
+  try {
+    // GitHub's commits-by-path filter is case-sensitive, and real repos use
+    // "Bytes.hk" (capital B), so that's tried first; "bytes.hk" is a
+    // fallback for the few repos that spell it lowercase. Deliberately
+    // only 2 attempts (not all of MANIFEST_FILENAMES) — this endpoint
+    // counts against the same api.github.com rate limit as everything
+    // else on the page, and the all-caps spelling is rare enough not to
+    // be worth a 3rd request on every page view.
+    let commits = null;
+    let lastStatus = null;
+    for (const path of ["Bytes.hk", "bytes.hk"]) {
+      const res = await githubFetch(
+        `https://api.github.com/repos/${ids.owner}/${ids.repo}/commits?path=${encodeURIComponent(path)}&per_page=8`
+      );
+      lastStatus = res.status;
+      if (res.status === 403) {
+        const resetNote = typeof rateLimitResetNote === "function" ? rateLimitResetNote() : null;
+        return renderChangelogError(
+          `rate limit hit — add a GitHub token in settings${resetNote ? ` (this IP's limit ${resetNote})` : ""}`,
+          true
+        );
+      }
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (Array.isArray(data) && data.length) {
+        commits = data;
+        break;
+      }
+      if (Array.isArray(data) && !commits) commits = data; // keep an empty-but-valid result as a fallback
     }
-    if (!res.ok) return renderChangelogError(`GitHub API → HTTP ${res.status}`);
-    const commits = await res.json();
-    if (!Array.isArray(commits)) return renderChangelogError("Unexpected response from GitHub.");
+    if (!commits) return renderChangelogError(`GitHub API → HTTP ${lastStatus}`);
     cacheSet(cacheKey, commits, TTL.COMMITS);
     renderChangelog(commits);
   } catch (err) {
@@ -461,7 +634,7 @@ function renderChangelog(commits) {
   if (!commits.length) {
     els.changelogPanel.innerHTML = `
       <h3>Manifest history</h3>
-      <p style="color:var(--muted);font-size:13px;margin:0;">No commits found that touched bytes.hk.</p>
+      <p style="color:var(--muted);font-size:13px;margin:0;">No commits found that touched Bytes.hk.</p>
     `;
     return;
   }
@@ -508,9 +681,7 @@ function renderChangelogError(message, isRateLimit) {
   });
 }
 
-function escapeHtml(s) {
-  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
+/* escapeHtml is defined once in js/enrich.js (loaded before this file). */
 
 els.codeCopy?.addEventListener("click", async () => {
   const raw = els.code.dataset.raw || els.code.textContent || "";
