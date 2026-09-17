@@ -8,12 +8,12 @@
     <meta property="og:type" content="website" />
   <meta property="og:site_name" content="bytes.io" />
   <meta property="og:title" content="How bytes.io works" />
-  <meta property="og:description" content="How the bytes.hk manifest, language detection, caching, and every other bytes.io feature works, in one page." />
+  <meta property="og:description" content="How the Bytes.hk manifest, language detection, caching, and every other bytes.io feature works, in one page." />
   <meta property="og:url" content="https://bytes-repository.github.io/pages/about.html" />
   <meta property="og:image" content="https://bytes-repository.github.io/images/og/default.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="How bytes.io works" />
-  <meta name="twitter:description" content="How the bytes.hk manifest, language detection, caching, and every other bytes.io feature works, in one page." />
+  <meta name="twitter:description" content="How the Bytes.hk manifest, language detection, caching, and every other bytes.io feature works, in one page." />
   <meta name="twitter:image" content="https://bytes-repository.github.io/images/og/default.png" />
   <link rel="manifest" href="../manifest.webmanifest" />
   <meta name="theme-color" content="#EC4899" />
@@ -107,39 +107,36 @@
     </section>
 
     <section>
-      <h2>2. The manifest — <code>bytes.hk</code></h2>
-      <p>Each repo carries a <code>bytes.hk</code> file at its root, playing the role <code>Cargo.toml</code> plays for Rust — with its own block syntax:</p>
-      <pre>@package {
-  name: "mold"
-  version: "0.4.2"
-  authors: ["janekk"]
-  license: "MIT"
-  description: "Molding utilities for H#"
-}
+      <h2>2. The manifest — <code>Bytes.hk</code></h2>
+      <p>Each repo carries a <code>Bytes.hk</code> file at its root (some older repos still spell it <code>bytes.hk</code> — bytes.io checks both), playing the role <code>Cargo.toml</code> plays for Rust — with its own <code>[section]</code> / <code>-&gt; key =&gt; value</code> syntax rather than braces:</p>
+      <pre>[package]
+-&gt; name        =&gt; mold
+-&gt; version     =&gt; 0.4.2
+-&gt; author      =&gt; janekk
+-&gt; license     =&gt; MIT
+-&gt; description =&gt; Molding utilities for H#
 
-@deps {
-  obsidian: "^1.2.0"
-  silver: ">=0.3"
-}
+[deps]
+-&gt; obsidian =&gt; ^1.2.0   ;; core IR types
+-&gt; silver   =&gt; &gt;=0.3
 
-@build {
-  entry: "src/main.h#"
-  target: "native"
-}
+[build]
+-&gt; lang   =&gt; h#
+-&gt; entry  =&gt; src/main.h#
+-&gt; output =&gt; build/mold
+-&gt; emit   =&gt; bin
 
-@stats {
-  downloads: 15234
-  stars: 342
-  tags: ["cli", "parser", "compression"]
-}
+[stats]
+-&gt; downloads =&gt; 15234
+-&gt; stars     =&gt; 342
+-&gt; tags      =&gt; [cli, parser, compression]
 
-@downloads {
-  "0.4.2": 8210
-  "0.4.1": 4120
-  "0.4.0": 2104
-  "0.3.0": 800
-}</pre>
-      <p>bytes.io fetches and parses this file client-side to render the package, dependency, build, and stats panels on each library's page. The <code>@stats</code> block is optional — <code>downloads</code> and <code>stars</code> render as figures, and <code>tags</code> render as pills. The optional <code>@downloads</code> block breaks that total down per version, crates.io-style: each key is a version string, each value its download count, rendered as a bar chart sorted by version.</p>
+[downloads]
+-&gt; 0.4.2 =&gt; 8210
+-&gt; 0.4.1 =&gt; 4120
+-&gt; 0.4.0 =&gt; 2104
+-&gt; 0.3.0 =&gt; 800</pre>
+      <p>Lines starting with <code>;;</code> are comments and run to end of line — plain <code>#</code> is <em>not</em> a comment marker, since it shows up literally inside real values (the language is called "H#"). bytes.io fetches and parses this file client-side to render the package, dependency, build, and stats panels on each library's page. A single <code>author</code> entry works the same as an <code>authors</code> list. The <code>[stats]</code> section is optional — <code>downloads</code> and <code>stars</code> render as figures (falling back to the repo's live GitHub star/fork counts when this section is missing), and <code>tags</code> render as pills (falling back to GitHub topics). The optional <code>[downloads]</code> section breaks that total down per version, crates.io-style: each key is a version string, each value its download count, rendered as a bar chart sorted by version.</p>
     </section>
 
     <section>
@@ -157,7 +154,7 @@
 
     <section>
       <h2>4. Search, filters & sorting</h2>
-      <p>The search box on the homepage matches against a library's name, its <code>@package.description</code>, and its <code>@stats.tags</code> — not just the name. The language dropdown and tag chips underneath narrow the grid further, and the sort control reorders it by name, downloads, stars, or how recently <code>bytes.hk</code> was last touched. All of this runs on data gathered in the background right after <code>index.json</code> loads: each library's language, description, tags, and last-commit date get fetched a few at a time and cached, so cards fill in progressively instead of blocking the page.</p>
+      <p>The search box on the homepage matches against a library's name, its <code>[package] description</code>, and its <code>[stats] tags</code> — not just the name. The language dropdown and tag chips underneath narrow the grid further, and the sort control reorders it by name, downloads, stars, or how recently <code>Bytes.hk</code> was last touched. All of this runs on data gathered in the background right after <code>index.json</code> loads: each library's language, description (falling back to the repo's GitHub description when the manifest is silent or missing), tags, and last-commit date get fetched a few at a time and cached, so cards fill in progressively instead of blocking the page.</p>
     </section>
 
     <section>
@@ -168,7 +165,7 @@
 
     <section>
       <h2>6. Manifest history &amp; author pages</h2>
-      <p>Every library page has a "Manifest history" panel pulling the real commit log for <code>bytes.hk</code> from GitHub's API — so you can see how a package's dependencies or version evolved over time, not just its current state. Downloads-by-version bars are sorted with a spec-correct <a href="https://semver.org/#spec-item-11" target="_blank" rel="noopener">SemVer 2.0.0</a> comparator, so pre-release versions like <code>1.0.0-beta.1</code> land in the right place instead of a naive dot-split sort mangling them.</p>
+      <p>Every library page has a "Manifest history" panel pulling the real commit log for <code>Bytes.hk</code> from GitHub's API — so you can see how a package's dependencies or version evolved over time, not just its current state. Downloads-by-version bars are sorted with a spec-correct <a href="https://semver.org/#spec-item-11" target="_blank" rel="noopener">SemVer 2.0.0</a> comparator, so pre-release versions like <code>1.0.0-beta.1</code> land in the right place instead of a naive dot-split sort mangling them.</p>
       <p>Each name in <code>@package.authors</code> links to a profile page combining that person's public GitHub profile with every bytes.io library that lists them as an author. That lookup normally comes from a prebuilt reverse index (<code>data/authors-index.json</code>, generated by <code>scripts/generate-site-data.mjs</code>) instead of scanning every manifest live on each visit; if an author was added since the index was last built, the page falls back to a live scan automatically.</p>
     </section>
 
@@ -197,12 +194,12 @@
 
     <section>
       <h2>12. Install command</h2>
-      <p>Every library page has an "Install" panel with a copyable <code>bytes add &lt;name&gt;</code> CLI command and the equivalent line to paste straight into your own <code>bytes.hk</code> dependencies.</p>
+      <p>Every library page has an "Install" panel with a copyable <code>bytes add &lt;name&gt;</code> CLI command and the equivalent line to paste straight into your own <code>Bytes.hk</code> dependencies.</p>
     </section>
 
     <section>
       <h2>13. Sharing &amp; SEO</h2>
-      <p>Sharing a link to a library on Discord or Twitter used to show a bare URL, because those crawlers don't run JavaScript — <code>repo.html</code> is rendered entirely client-side. <code>scripts/generate-site-data.mjs</code> fixes that at build time: for every library with a <code>bytes.hk</code>, it generates a static page under <code>pages/lib/&lt;slug&gt;.html</code> with real Open Graph / Twitter Card tags and a branded 1200×630 preview image (drawn per-library by <code>scripts/generate-og-images.py</code>), that instantly redirects a human into the interactive page. Homepage and "recently added" cards link to these static pages automatically wherever one exists; the same build script also maintains <code>sitemap.xml</code>, and <code>robots.txt</code> points crawlers at it.</p>
+      <p>Sharing a link to a library on Discord or Twitter used to show a bare URL, because those crawlers don't run JavaScript — <code>repo.html</code> is rendered entirely client-side. <code>scripts/generate-site-data.mjs</code> fixes that at build time: for every library with a <code>Bytes.hk</code>, it generates a static page under <code>pages/lib/&lt;slug&gt;.html</code> with real Open Graph / Twitter Card tags and a branded 1200×630 preview image (drawn per-library by <code>scripts/generate-og-images.py</code>), that instantly redirects a human into the interactive page. Homepage and "recently added" cards link to these static pages automatically wherever one exists; the same build script also maintains <code>sitemap.xml</code>, and <code>robots.txt</code> points crawlers at it.</p>
     </section>
 
     <section>
