@@ -72,7 +72,7 @@ function libCardHtml(lib, data) {
         <div class="lib-glyph">${initials(lib.name)}</div>
         <h3>${lib.name}</h3>
       </div>
-      <p>${data?.description || "Library manifest served from bytes.hk at the repo root."}</p>
+      <p>${data?.description || "Library manifest served from Bytes.hk at the repo root."}</p>
       <div class="lib-card-foot">
         <span class="pill"><span class="dot" style="background:${langColor}"></span>${lang || "H#"}</span>
         <span class="go">View manifest →</span>
@@ -101,7 +101,7 @@ async function loadLibraries() {
   await scanAllLibrariesLive();
 }
 
-/** Falls back to a full live scan across every library's bytes.hk — used when the prebuilt author index doesn't have this author yet (e.g. added since the last build). */
+/** Falls back to a full live scan across every library's Bytes.hk — used when the prebuilt author index doesn't have this author yet (e.g. added since the last build). */
 async function scanAllLibrariesLive() {
   const cached = cacheGetStale(INDEX_CACHE_KEY);
   let libs = cached ? normalizeIndex(cached) : [];
