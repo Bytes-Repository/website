@@ -55,13 +55,67 @@ const LANGUAGE_COLORS = Object.assign({}, GITHUB_LANG_COLORS, BYTES_CUSTOM_LANG_
 
 const FALLBACK_COLOR = "#8f8fa3";
 
-/** Maps a file extension (no dot, lowercase) to a language name bytes.io understands. */
+/**
+ * Maps a file extension (no dot, lowercase) to a language name bytes.io
+ * understands. This covers both bytes.io's own H#-ecosystem extensions
+ * (which GitHub's linguist has never heard of) AND the common standard
+ * languages, because the whole language breakdown — not just the custom
+ * part — is computed from a single recursive file-tree listing rather
+ * than from GitHub's separate `/languages` endpoint. That endpoint used
+ * to be queried too, but every extra api.github.com call eats into the
+ * unauthenticated 60-requests/hour budget, and needing BOTH that call and
+ * the tree call to succeed made language detection fail twice as often as
+ * it needed to. One shared, already-fetched tree is enough on its own.
+ */
 const EXTENSION_TO_LANGUAGE = {
+  // bytes.io / H# ecosystem — unknown to GitHub's own linguist
   "h#": "H#",
   "h#i": "H# Interface",
   "hk": "hk",
   "hcs": "HackerScript",
-  "hl": "Hacker Lang"
+  "hl": "Hacker Lang",
+  // common standard languages, kept in sync with GITHUB_LANG_COLORS above
+  "js": "JavaScript", "jsx": "JavaScript", "mjs": "JavaScript", "cjs": "JavaScript",
+  "ts": "TypeScript", "tsx": "TypeScript",
+  "py": "Python", "pyw": "Python",
+  "java": "Java",
+  "c": "C", "h": "C",
+  "cpp": "C++", "cc": "C++", "cxx": "C++", "hpp": "C++", "hh": "C++", "hxx": "C++",
+  "cs": "C#",
+  "go": "Go",
+  "rs": "Rust",
+  "rb": "Ruby",
+  "php": "PHP",
+  "swift": "Swift",
+  "kt": "Kotlin", "kts": "Kotlin",
+  "dart": "Dart",
+  "html": "HTML", "htm": "HTML",
+  "css": "CSS",
+  "sh": "Shell", "bash": "Shell", "zsh": "Shell",
+  "ps1": "PowerShell", "psm1": "PowerShell",
+  "scala": "Scala", "sc": "Scala",
+  "hs": "Haskell", "lhs": "Haskell",
+  "lua": "Lua",
+  "pl": "Perl", "pm": "Perl",
+  "r": "R",
+  "m": "Objective-C", "mm": "Objective-C",
+  "ex": "Elixir", "exs": "Elixir",
+  "clj": "Clojure", "cljs": "Clojure", "cljc": "Clojure",
+  "zig": "Zig",
+  "ml": "OCaml", "mli": "OCaml",
+  "erl": "Erlang", "hrl": "Erlang",
+  "jl": "Julia",
+  "vim": "Vim script",
+  "vue": "Vue",
+  "svelte": "Svelte",
+  "asm": "Assembly", "s": "Assembly",
+  "cr": "Crystal",
+  "nim": "Nim",
+  "sol": "Solidity",
+  // Deliberately NOT mapped: md/markdown, json, yml/yaml — GitHub's own
+  // linguist treats these as documentation/data rather than "language" by
+  // default, and counting them here would make READMEs and config files
+  // dominate the breakdown for small libraries.
 };
 
 /** Languages whose swatch color is (near-)white and needs a visible outline wherever it's drawn. */
